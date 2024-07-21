@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.weather.current.CurrentWeather;
-import org.example.dto.weather.WeatherAPIProperties;
 import org.example.dto.weather.forecast.WeatherForecast;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -16,19 +15,19 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @RequiredArgsConstructor
 public class WeatherAPIService {
-    private final WeatherAPIProperties weatherAPIProperties;
+    private final WeatherAPIProperties2 weatherAPIProperties2;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
     public CurrentWeather getCurrentWeather(String city, String language) {
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.ACCEPT, "application/json");
-        headers.set("x-rapidapi-key", weatherAPIProperties.getKey());
+        headers.set("x-rapidapi-key", weatherAPIProperties2.getKey());
 
         HttpEntity<String> request = new HttpEntity<>(headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                weatherAPIProperties.getUrl() + "/current.json" + "?q={city}&lang={language}",
+                weatherAPIProperties2.getUrl() + "/current.json" + "?q={city}&lang={language}",
                 HttpMethod.GET,
                 request,
                 String.class,
@@ -48,12 +47,12 @@ public class WeatherAPIService {
     public WeatherForecast getWeatherForecast(String city, String language, Integer dayCount) {
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.ACCEPT, "application/json");
-        headers.set("x-rapidapi-key", weatherAPIProperties.getKey());
+        headers.set("x-rapidapi-key", weatherAPIProperties2.getKey());
 
         HttpEntity<String> request = new HttpEntity<>(headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                weatherAPIProperties.getUrl() + "/forecast.json" + "?q={city}&language={language}&days={dayCount}",
+                weatherAPIProperties2.getUrl() + "/forecast.json" + "?q={city}&language={language}&days={dayCount}",
                 HttpMethod.GET,
                 request,
                 String.class,

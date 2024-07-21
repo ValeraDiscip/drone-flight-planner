@@ -3,12 +3,10 @@ package org.example.dto.weather.current;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Data
-@NoArgsConstructor
 public class Location {
     @JsonProperty("name")
     private String cityName;
