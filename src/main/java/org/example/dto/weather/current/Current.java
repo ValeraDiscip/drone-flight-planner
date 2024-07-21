@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class Current {
     private Condition condition;
-    //или лучше сделать тип данных String? чтобы не было такого иногда "humidity": 65.0, "pressure_mb": 1007.0, или на это все равно?
+
     @JsonProperty("temp_c")
     private Double temperature;
 

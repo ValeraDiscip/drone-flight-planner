@@ -34,13 +34,12 @@ public class WeatherAPIService {
                 city,
                 language
         );
-        //как здесь лучше обработать исключение или пока оставить так?
+
         try {
             return objectMapper.readValue(response.getBody(), CurrentWeather.class);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        //пока оставить так?
         return null;
     }
 

@@ -8,8 +8,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class Location {
-    @JsonProperty("name")
-    private String cityName;
+    private String name;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     @JsonProperty("localtime")
