@@ -12,20 +12,17 @@ public class HourWeatherForecast {
     private LocalDateTime time;
 
     @JsonProperty("temp_c")
-    private Double temperature;
+    private Short temperature;
 
     @JsonProperty("wind_kph")
-    private Double windSpeed;
+    private Short windSpeed;
 
     @JsonProperty("pressure_mb")
-    private Double pressure;
-
-    @JsonProperty("precip_mm")
-    private Double precip;
-    private Double humidity;
+    private Short pressure;
+    private Short humidity;
 
     @JsonProperty("gust_kph")
-    private Double windGust;
+    private Short windGust;
 }
 
 

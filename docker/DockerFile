@@ -1,0 +1,4 @@
+FROM postgres:latest
+ENV POSTGRES_DB drone-flight-planner
+ENV POSTGRES_USER drone-flight-planner
+ENV POSTGRES_PASSWORD drone-flight-planner
