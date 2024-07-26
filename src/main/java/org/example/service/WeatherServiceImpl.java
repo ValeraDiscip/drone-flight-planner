@@ -1,6 +1,7 @@
 package org.example.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.dao.ClientDao;
 import org.example.dto.FlightPossibilityResult;
 import org.example.dto.client.Parameter;
 import org.example.dto.weather.current.CurrentWeather;
@@ -11,73 +12,81 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class WeatherApiServiceImpl implements WeatherApiService {
-    private final WeatherApiClientService weatherApiClientService;
+public class WeatherServiceImpl implements WeatherService {
+    private final ClientDao clientDao;
+    private final WeatherApiClient weatherApiClient;
 
     @Override
-    public FlightPossibilityResult evaluateFlightPossibility(Parameter parameters) {
+    public FlightPossibilityResult evaluateFlightPossibility(Integer clientID) {
+
+        Parameter clientParameters = clientDao.getParameterByClientId(clientID);
+
+        if (clientParameters == null) {
+            return null;
+        }
+
         FlightPossibilityResult flightPossibilityResult = new FlightPossibilityResult();
 
-        CurrentWeather currentWeather = weatherApiClientService.getCurrentWeather(parameters.getLocation());
+        CurrentWeather currentWeather = weatherApiClient.getCurrentWeather(clientParameters.getLocation());
 
         flightPossibilityResult.setCurrentWeather(currentWeather);
 
         List<String> inappropriateWeatherConditionsInfo = new ArrayList<>();
 
-        if (currentWeather.getCurrent().getTemperature() < parameters.getMinTemperature()) {
+        if (currentWeather.getCurrent().getTemperature() < clientParameters.getMinTemperature()) {
             inappropriateWeatherConditionsInfo.add("Минимально допустимая температура для полета = "
-                    + parameters.getMinTemperature()
+                    + clientParameters.getMinTemperature()
                     + ". Текущая температура = " + currentWeather.getCurrent().getTemperature()
                     + " (ниже допустимой на "
-                    + (parameters.getMinTemperature() - currentWeather.getCurrent().getTemperature()) + ")");
+                    + (clientParameters.getMinTemperature() - currentWeather.getCurrent().getTemperature()) + ")");
         }
 
-        if (currentWeather.getCurrent().getTemperature() > parameters.getMaxTemperature()) {
+        if (currentWeather.getCurrent().getTemperature() > clientParameters.getMaxTemperature()) {
             inappropriateWeatherConditionsInfo.add("Максимально допустимая температура для полета = "
-                    + parameters.getMaxTemperature()
+                    + clientParameters.getMaxTemperature()
                     + ". Текущая температура = " + currentWeather.getCurrent().getTemperature()
                     + " (выше допустимой на "
-                    + (parameters.getMaxTemperature() - currentWeather.getCurrent().getTemperature()) + ")");
+                    + (clientParameters.getMaxTemperature() - currentWeather.getCurrent().getTemperature()) + ")");
         }
 
-        if (currentWeather.getCurrent().getWindSpeed() > parameters.getMaxWindSpeed()) {
+        if (currentWeather.getCurrent().getWindSpeed() > clientParameters.getMaxWindSpeed()) {
             inappropriateWeatherConditionsInfo.add("Максимально допустимая скорость ветра для полета = "
-                    + parameters.getMaxWindSpeed()
+                    + clientParameters.getMaxWindSpeed()
                     + ". Текущая скорость ветра = " + currentWeather.getCurrent().getWindSpeed()
                     + " (выше допустимой на "
-                    + (currentWeather.getCurrent().getWindSpeed() - parameters.getMaxWindSpeed()) + ")");
+                    + (currentWeather.getCurrent().getWindSpeed() - clientParameters.getMaxWindSpeed()) + ")");
         }
 
-        if (currentWeather.getCurrent().getWindGust() > parameters.getMaxWindGust()) {
+        if (currentWeather.getCurrent().getWindGust() > clientParameters.getMaxWindGust()) {
             inappropriateWeatherConditionsInfo.add("Максимально допустимые порывы ветра для полета = "
-                    + parameters.getMaxWindGust()
+                    + clientParameters.getMaxWindGust()
                     + ". Текущие порывы ветра = " + currentWeather.getCurrent().getWindGust()
                     + " (выше допустимых на "
-                    + (currentWeather.getCurrent().getWindGust() - parameters.getMaxWindGust()) + ")");
+                    + (currentWeather.getCurrent().getWindGust() - clientParameters.getMaxWindGust()) + ")");
         }
 
-        if (currentWeather.getCurrent().getHumidity() > parameters.getMaxHumidity()) {
+        if (currentWeather.getCurrent().getHumidity() > clientParameters.getMaxHumidity()) {
             inappropriateWeatherConditionsInfo.add("Максимально допустимая влажность для полета = "
-                    + parameters.getMaxHumidity()
+                    + clientParameters.getMaxHumidity()
                     + ". Текущая влажность = " + currentWeather.getCurrent().getHumidity()
                     + " (выше допустимой на "
-                    + (currentWeather.getCurrent().getHumidity() - parameters.getMaxHumidity()) + ")");
+                    + (currentWeather.getCurrent().getHumidity() - clientParameters.getMaxHumidity()) + ")");
         }
 
-        if (currentWeather.getCurrent().getPrecip() > parameters.getMaxPrecip()) {
+        if (currentWeather.getCurrent().getPrecip() > clientParameters.getMaxPrecip()) {
             inappropriateWeatherConditionsInfo.add("Максимально допустимое кол-во осадков для полета = "
-                    + parameters.getMaxHumidity()
+                    + clientParameters.getMaxHumidity()
                     + ". Текущее кол-во осадков = " + currentWeather.getCurrent().getHumidity()
                     + " (выше допустимого на "
-                    + (currentWeather.getCurrent().getHumidity() - parameters.getMaxHumidity()) + ")");
+                    + (currentWeather.getCurrent().getHumidity() - clientParameters.getMaxHumidity()) + ")");
         }
 
-        if (currentWeather.getCurrent().getPressure() > parameters.getMaxPressure()) {
+        if (currentWeather.getCurrent().getPressure() > clientParameters.getMaxPressure()) {
             inappropriateWeatherConditionsInfo.add("Максимально допустимое давление для полета = "
-                    + parameters.getMaxPressure()
+                    + clientParameters.getMaxPressure()
                     + ". Текущее давление = " + currentWeather.getCurrent().getPressure()
                     + " (выше допустимого на "
-                    + (currentWeather.getCurrent().getPressure() - parameters.getMaxPressure()) + ")");
+                    + (currentWeather.getCurrent().getPressure() - clientParameters.getMaxPressure()) + ")");
         }
 
         if (!inappropriateWeatherConditionsInfo.isEmpty()) {

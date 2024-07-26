@@ -10,5 +10,5 @@ import java.util.List;
 public class FlightPossibilityResult {
     private CurrentWeather currentWeather;
     private String conclusion;
-    private List<String> inappropriateWeatherConditionsInfo = new ArrayList<>();
+    private List<String> inappropriateWeatherConditionsInfo;
 }

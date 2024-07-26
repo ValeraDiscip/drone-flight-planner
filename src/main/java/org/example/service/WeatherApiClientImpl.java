@@ -14,7 +14,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
-public class WeatherApiClientServiceImpl implements WeatherApiClientService {
+public class WeatherApiClientImpl implements WeatherApiClient {
     private final WeatherApiProperties weatherAPIProperties;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
