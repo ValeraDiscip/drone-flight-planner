@@ -12,10 +12,11 @@ import lombok.NoArgsConstructor;
 public class Parameter {
     private String language;
     private String location;
-    private Short minTemperature;
-    private Short maxTemperature;
-    private Short maxWindSpeed;
-    private Short maxWindGust;
-    private Short maxHumidity;
-    private Short maxPressure;
+    private Double minTemperature;
+    private Double maxTemperature;
+    private Double maxWindSpeed;
+    private Double maxWindGust;
+    private Double maxHumidity;
+    private Double maxPrecip;
+    private Double maxPressure;
 }
