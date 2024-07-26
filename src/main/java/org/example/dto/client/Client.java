@@ -4,5 +4,6 @@ import lombok.Data;
 
 @Data
 public class Client {
-    private final Parameter parameters;
+    private int id;
+    private Parameter parameters;
 }
