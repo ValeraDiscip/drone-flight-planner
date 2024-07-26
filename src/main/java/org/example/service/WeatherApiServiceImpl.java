@@ -2,7 +2,7 @@ package org.example.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.dto.FlightPossibilityResult;
-import org.example.dto.user.Parameter;
+import org.example.dto.client.Parameter;
 import org.example.dto.weather.current.CurrentWeather;
 import org.springframework.stereotype.Service;
 

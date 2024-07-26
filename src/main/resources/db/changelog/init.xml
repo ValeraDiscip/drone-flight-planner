@@ -4,6 +4,21 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
+    <changeSet id="create-table-client" author="Valera">
+        <preConditions>
+            <not>
+                <tableExists tableName="client"/>
+            </not>
+        </preConditions>
+        <sql>
+            CREATE TABLE client
+            (
+                id SERIAL PRIMARY KEY NOT NULL
+            )
+        </sql>
+    </changeSet>
+
+
     <changeSet id="create-table-parameter" author="Valera">
         <preConditions>
             <not>
@@ -13,15 +28,16 @@
         <sql>
             CREATE TABLE parameter
             (
-                id              SERIAL PRIMARY KEY NOT NULL,
-                language        VARCHAR(20)        NOT NULL,
-                location        VARCHAR(20)        NOT NULL,
-                min_temperature DOUBLE PRECISION   NOT NULL,
-                max_temperature DOUBLE PRECISION   NOT NULL,
-                max_wind_speed  DOUBLE PRECISION   NOT NULL,
-                max_wind_gust   DOUBLE PRECISION   NOT NULL,
-                max_humidity    DOUBLE PRECISION   NOT NULL,
-                max_pressure    DOUBLE PRECISION   NOT NULL
+                client_id       INT REFERENCES client (id) NOT NULL,
+                language        VARCHAR(20)                NOT NULL,
+                location        VARCHAR(20)                NOT NULL,
+                min_temperature DOUBLE PRECISION           NOT NULL,
+                max_temperature DOUBLE PRECISION           NOT NULL,
+                max_wind_speed  DOUBLE PRECISION           NOT NULL,
+                max_wind_gust   DOUBLE PRECISION           NOT NULL,
+                max_humidity    DOUBLE PRECISION           NOT NULL,
+                max_precip      DOUBLE PRECISION           NOT NULL,
+                max_pressure    DOUBLE PRECISION           NOT NULL
             )
         </sql>
     </changeSet>
