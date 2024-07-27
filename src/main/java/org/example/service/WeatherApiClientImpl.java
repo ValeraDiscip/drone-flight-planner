@@ -14,25 +14,25 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
-public class WeatherAPIService {
-    private final WeatherAPIProperties2 weatherAPIProperties2;
+public class WeatherApiClientImpl implements WeatherApiClient {
+    private final WeatherApiProperties weatherAPIProperties;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
-    public CurrentWeather getCurrentWeather(String city, String language) {
+    @Override
+    public CurrentWeather getCurrentWeather(String city) {
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.ACCEPT, "application/json");
-        headers.set("x-rapidapi-key", weatherAPIProperties2.getKey());
+        headers.set("x-rapidapi-key", weatherAPIProperties.getKey());
 
         HttpEntity<String> request = new HttpEntity<>(headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                weatherAPIProperties2.getUrl() + "/current.json" + "?q={city}&lang={language}",
+                weatherAPIProperties.getUrl() + "/current.json" + "?q={city}",
                 HttpMethod.GET,
                 request,
                 String.class,
-                city,
-                language
+                city
         );
 
         try {
@@ -43,15 +43,16 @@ public class WeatherAPIService {
         return null;
     }
 
+    @Override
     public WeatherForecast getWeatherForecast(String city, String language, Integer dayCount) {
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.ACCEPT, "application/json");
-        headers.set("x-rapidapi-key", weatherAPIProperties2.getKey());
+        headers.set("x-rapidapi-key", weatherAPIProperties.getKey());
 
         HttpEntity<String> request = new HttpEntity<>(headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                weatherAPIProperties2.getUrl() + "/forecast.json" + "?q={city}&language={language}&days={dayCount}",
+                weatherAPIProperties.getUrl() + "/forecast.json" + "?q={city}&language={language}&days={dayCount}",
                 HttpMethod.GET,
                 request,
                 String.class,

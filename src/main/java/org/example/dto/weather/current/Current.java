@@ -15,10 +15,10 @@ public class Current {
 
     @JsonProperty("pressure_mb")
     private Double pressure;
+    private Double humidity;
 
     @JsonProperty("precip_mm")
     private Double precip;
-    private Double humidity;
 
     @JsonProperty("gust_kph")
     private Double windGust;
