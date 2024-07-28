@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
+
 @Service
 @RequiredArgsConstructor
 public class WeatherApiClientImpl implements WeatherApiClient {
@@ -59,6 +61,32 @@ public class WeatherApiClientImpl implements WeatherApiClient {
                 city,
                 language,
                 dayCount
+        );
+        try {
+            return objectMapper.readValue(response.getBody(), WeatherForecast.class);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public WeatherForecast getWeatherHistory(String city, String language, Integer hour, LocalDate localDate) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.ACCEPT, "application/json");
+        headers.set("x-rapidapi-key", weatherAPIProperties.getKey());
+
+        HttpEntity<String> request = new HttpEntity<>(headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                weatherAPIProperties.getUrl() + "/history.json" + "?q={city}&lang={language}&hour={hour}&dt={localDate}",
+                HttpMethod.GET,
+                request,
+                String.class,
+                city,
+                language,
+                hour,
+                localDate
         );
         try {
             return objectMapper.readValue(response.getBody(), WeatherForecast.class);

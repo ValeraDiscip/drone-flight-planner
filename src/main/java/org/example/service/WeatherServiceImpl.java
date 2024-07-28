@@ -3,10 +3,15 @@ package org.example.service;
 import lombok.RequiredArgsConstructor;
 import org.example.dao.ClientDao;
 import org.example.dto.FlightPossibilityResult;
+import org.example.dto.client.Flight;
 import org.example.dto.client.Parameter;
+import org.example.dto.weather.forecast.HourWeatherForecast;
 import org.example.dto.weather.current.CurrentWeather;
+import org.example.dto.weather.forecast.WeatherForecast;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,5 +107,23 @@ public class WeatherServiceImpl implements WeatherService {
         flightPossibilityResult.setConclusion("В настоящий момент полет является безопасным!");
 
         return flightPossibilityResult;
+    }
+
+    public void addFlight(Integer clientId, LocalDateTime timeOfFlight, Boolean successful) {
+        Parameter parameters = clientDao.getParameterByClientId(clientId);
+
+        LocalDate localDate = LocalDate.of(timeOfFlight.getYear(), timeOfFlight.getMonth(), timeOfFlight.getDayOfMonth());
+
+        WeatherForecast weatherForecast = weatherApiClient.getWeatherHistory(parameters.getLocation(), parameters.getLanguage(), timeOfFlight.getHour(), localDate);
+
+        HourWeatherForecast weatherDuringTheFlight = weatherForecast.getForecast().getDayWeatherForecast().get(0).getHourWeatherForecast().get(0);
+
+        Flight flight = new Flight();
+        flight.setClientId(clientId);
+        flight.setTimeOfFlight(timeOfFlight);
+        flight.setSuccessful(successful);
+        flight.setHourWeatherForecast(weatherDuringTheFlight);
+
+        clientDao.insertFlight(flight);
     }
 }
