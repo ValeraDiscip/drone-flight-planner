@@ -7,7 +7,7 @@ import org.example.dto.weather.forecast.HourWeatherForecast;
 public interface ClientDao {
     Parameter getParameterByClientId(Integer clientId);
 
-    void insertWeather(Integer flightId, HourWeatherForecast weather);
+    void saveWeather(Integer flightId, HourWeatherForecast weather);
 
-    void insertFlight(Flight flight);
+    void saveFlight(Flight flight);
 }

@@ -27,7 +27,7 @@ public class ClientDaoImpl implements ClientDao {
         }
     }
 
-    public void insertFlight(Flight flight) {
+    public void saveFlight(Flight flight) {
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -41,13 +41,13 @@ public class ClientDaoImpl implements ClientDao {
             return ps;
         }, keyHolder);
         try {
-            insertWeather(keyHolder.getKey().intValue(), flight.getHourWeatherForecast());
+            saveWeather(keyHolder.getKey().intValue(), flight.getHourWeatherForecast());
         } catch (NullPointerException e) {
             throw new RuntimeException("Ошибка при генерации id", e);
         }
     }
 
-    public void insertWeather(Integer flightId, HourWeatherForecast weather) {
+    public void saveWeather(Integer flightId, HourWeatherForecast weather) {
         jdbcTemplate.update("INSERT INTO weather " +
                         "(flight_id, time, temperature, wind_speed, pressure, humidity, precip, wind_gust)" +
                         " VALUES (?, ?, ?, ?, ?, ?, ?, ?)",

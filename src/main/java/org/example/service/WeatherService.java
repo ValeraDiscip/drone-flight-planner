@@ -7,5 +7,5 @@ import java.time.LocalDateTime;
 public interface WeatherService {
     FlightPossibilityResult evaluateFlightPossibility(Integer userId);
 
-    void addFlight(Integer clientId, LocalDateTime timeOfFlight, Boolean successful);
+    void saveFlight(Integer clientId, LocalDateTime timeOfFlight, Boolean successful);
 }

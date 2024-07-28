@@ -7,7 +7,7 @@ import org.example.dto.client.Flight;
 import org.example.dto.client.Parameter;
 import org.example.dto.weather.forecast.HourWeatherForecast;
 import org.example.dto.weather.current.CurrentWeather;
-import org.example.dto.weather.forecast.WeatherForecast;
+import org.example.dto.weather.forecast.Weather;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -109,14 +109,14 @@ public class WeatherServiceImpl implements WeatherService {
         return flightPossibilityResult;
     }
 
-    public void addFlight(Integer clientId, LocalDateTime timeOfFlight, Boolean successful) {
+    public void saveFlight(Integer clientId, LocalDateTime timeOfFlight, Boolean successful) {
         Parameter parameters = clientDao.getParameterByClientId(clientId);
 
         LocalDate localDate = LocalDate.of(timeOfFlight.getYear(), timeOfFlight.getMonth(), timeOfFlight.getDayOfMonth());
 
-        WeatherForecast weatherForecast = weatherApiClient.getWeatherHistory(parameters.getLocation(), parameters.getLanguage(), timeOfFlight.getHour(), localDate);
+        Weather weather = weatherApiClient.getWeatherHistory(parameters.getLocation(), parameters.getLanguage(), timeOfFlight.getHour(), localDate);
 
-        HourWeatherForecast weatherDuringTheFlight = weatherForecast.getForecast().getDayWeatherForecast().get(0).getHourWeatherForecast().get(0);
+        HourWeatherForecast weatherDuringTheFlight = weather.getForecast().getDayWeatherForecast().get(0).getHourWeatherForecast().get(0);
 
         Flight flight = new Flight();
         flight.setClientId(clientId);
@@ -124,6 +124,6 @@ public class WeatherServiceImpl implements WeatherService {
         flight.setSuccessful(successful);
         flight.setHourWeatherForecast(weatherDuringTheFlight);
 
-        clientDao.insertFlight(flight);
+        clientDao.saveFlight(flight);
     }
 }

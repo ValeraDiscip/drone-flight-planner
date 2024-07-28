@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.weather.current.CurrentWeather;
-import org.example.dto.weather.forecast.WeatherForecast;
+import org.example.dto.weather.forecast.Weather;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -46,7 +46,7 @@ public class WeatherApiClientImpl implements WeatherApiClient {
     }
 
     @Override
-    public WeatherForecast getWeatherForecast(String city, String language, Integer dayCount) {
+    public Weather getWeatherForecast(String city, String language, Integer dayCount) {
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.ACCEPT, "application/json");
         headers.set("x-rapidapi-key", weatherAPIProperties.getKey());
@@ -63,7 +63,7 @@ public class WeatherApiClientImpl implements WeatherApiClient {
                 dayCount
         );
         try {
-            return objectMapper.readValue(response.getBody(), WeatherForecast.class);
+            return objectMapper.readValue(response.getBody(), Weather.class);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -71,7 +71,7 @@ public class WeatherApiClientImpl implements WeatherApiClient {
     }
 
     @Override
-    public WeatherForecast getWeatherHistory(String city, String language, Integer hour, LocalDate localDate) {
+    public Weather getWeatherHistory(String city, String language, Integer hour, LocalDate localDate) {
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.ACCEPT, "application/json");
         headers.set("x-rapidapi-key", weatherAPIProperties.getKey());
@@ -89,7 +89,7 @@ public class WeatherApiClientImpl implements WeatherApiClient {
                 localDate
         );
         try {
-            return objectMapper.readValue(response.getBody(), WeatherForecast.class);
+            return objectMapper.readValue(response.getBody(), Weather.class);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
