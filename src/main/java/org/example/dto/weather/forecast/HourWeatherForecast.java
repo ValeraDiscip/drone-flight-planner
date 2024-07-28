@@ -27,5 +27,3 @@ public class HourWeatherForecast {
     @JsonProperty("gust_kph")
     private Double windGust;
 }
-
-
