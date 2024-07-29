@@ -109,7 +109,7 @@ public class WeatherServiceImpl implements WeatherService {
         return flightPossibilityResult;
     }
 
-    public void saveFlight(Integer clientId, LocalDateTime timeOfFlight, Boolean successful) {
+    public void saveFlightAndWeather(Integer clientId, LocalDateTime timeOfFlight, Boolean successful) {
         Parameter parameters = clientDao.getParameterByClientId(clientId);
 
         LocalDate localDate = LocalDate.of(timeOfFlight.getYear(), timeOfFlight.getMonth(), timeOfFlight.getDayOfMonth());
