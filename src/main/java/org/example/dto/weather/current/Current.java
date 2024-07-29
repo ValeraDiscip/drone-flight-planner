@@ -1,25 +1,11 @@
 package org.example.dto.weather.current;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.example.dto.weather.WeatherInfo;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class Current {
+public class Current extends WeatherInfo {
     private Condition condition;
-
-    @JsonProperty("temp_c")
-    private Double temperature;
-
-    @JsonProperty("wind_kph")
-    private Double windSpeed;
-
-    @JsonProperty("pressure_mb")
-    private Double pressure;
-    private Double humidity;
-
-    @JsonProperty("precip_mm")
-    private Double precip;
-
-    @JsonProperty("gust_kph")
-    private Double windGust;
 }

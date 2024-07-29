@@ -124,6 +124,6 @@ public class WeatherServiceImpl implements WeatherService {
         flight.setSuccessful(successful);
         flight.setHourWeatherForecast(weatherDuringTheFlight);
 
-        clientDao.saveFlight(flight);
+        clientDao.saveFlightAndWeather(flight);
     }
 }

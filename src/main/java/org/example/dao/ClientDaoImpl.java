@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
 import java.sql.Timestamp;
@@ -27,7 +28,8 @@ public class ClientDaoImpl implements ClientDao {
         }
     }
 
-    public void saveFlight(Flight flight) {
+    @Transactional
+    public void saveFlightAndWeather(Flight flight) {
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -40,18 +42,17 @@ public class ClientDaoImpl implements ClientDao {
             ps.setBoolean(3, flight.getSuccessful());
             return ps;
         }, keyHolder);
-        try {
-            saveWeather(keyHolder.getKey().intValue(), flight.getHourWeatherForecast());
-        } catch (NullPointerException e) {
-            throw new RuntimeException("Ошибка при генерации id", e);
-        }
-    }
 
-    public void saveWeather(Integer flightId, HourWeatherForecast weather) {
+        if (keyHolder.getKey() == null) {
+            throw new RuntimeException("Ошибка при генерации id");
+        }
+
+        HourWeatherForecast weather = flight.getHourWeatherForecast();
+
         jdbcTemplate.update("INSERT INTO weather " +
                         "(flight_id, time, temperature, wind_speed, pressure, humidity, precip, wind_gust)" +
                         " VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                flightId, weather.getTime(), weather.getTemperature(), weather.getWindSpeed(),
+                keyHolder.getKey().intValue(), weather.getTime(), weather.getTemperature(), weather.getWindSpeed(),
                 weather.getPressure(), weather.getHumidity(), weather.getPrecip(), weather.getWindGust());
     }
 }
