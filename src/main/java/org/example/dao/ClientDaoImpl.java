@@ -6,18 +6,17 @@ import org.example.dto.client.Parameter;
 import org.example.dto.weather.forecast.HourWeatherForecast;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsertOperations;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.sql.PreparedStatement;
-import java.sql.Timestamp;
 
 @Component
 @RequiredArgsConstructor
 public class ClientDaoImpl implements ClientDao {
     private final JdbcTemplate jdbcTemplate;
+    private final SimpleJdbcInsertOperations flightSimpleJdbcOperations;
+    private final SimpleJdbcInsertOperations weatherSimpleJdbcOperations;
 
     public Parameter getParameterByClientId(Integer clientId) {
         try {
@@ -31,29 +30,25 @@ public class ClientDaoImpl implements ClientDao {
     @Transactional
     public void saveFlightAndWeather(Flight flight) {
 
-        KeyHolder keyHolder = new GeneratedKeyHolder();
+        MapSqlParameterSource flightParameters = new MapSqlParameterSource();
+        flightParameters.addValue("client_id", flight.getClientId());
+        flightParameters.addValue("time_of_flight", flight.getTimeOfFlight());
+        flightParameters.addValue("successful", flight.getSuccessful());
 
-        String insertFlightSql = "INSERT INTO flight (client_id, time_of_flight, successful) VALUES (?, ?, ?)";
-
-        jdbcTemplate.update(con -> {
-            PreparedStatement ps = con.prepareStatement(insertFlightSql, new String[]{"id"});
-            ps.setInt(1, flight.getClientId());
-            ps.setTimestamp(2, Timestamp.valueOf(flight.getTimeOfFlight()));
-            ps.setBoolean(3, flight.getSuccessful());
-            return ps;
-        }, keyHolder);
-
-        if (keyHolder.getKey() == null) {
-            throw new RuntimeException("Ошибка при генерации id");
-        }
+        Number flightId = flightSimpleJdbcOperations.executeAndReturnKey(flightParameters);
 
         HourWeatherForecast weather = flight.getHourWeatherForecast();
 
-        jdbcTemplate.update("INSERT INTO weather " +
-                        "(flight_id, time, temperature, wind_speed, pressure, humidity, precip, wind_gust)" +
-                        " VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                keyHolder.getKey().intValue(), weather.getTime(), weather.getTemperature(), weather.getWindSpeed(),
-                weather.getPressure(), weather.getHumidity(), weather.getPrecip(), weather.getWindGust());
+        MapSqlParameterSource weatherParameters = new MapSqlParameterSource();
+        weatherParameters.addValue("flight_id", flightId.intValue());
+        weatherParameters.addValue("time", weather.getTime());
+        weatherParameters.addValue("temperature", weather.getTemperature());
+        weatherParameters.addValue("wind_speed", weather.getWindSpeed());
+        weatherParameters.addValue("pressure", weather.getPressure());
+        weatherParameters.addValue("humidity", weather.getHumidity());
+        weatherParameters.addValue("precip", weather.getPrecip());
+        weatherParameters.addValue("wind_gust", weather.getWindGust());
+
+        weatherSimpleJdbcOperations.execute(weatherParameters);
     }
 }
-

@@ -3,6 +3,7 @@ package org.example.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.dto.weather.current.CurrentWeather;
 import org.example.dto.weather.forecast.Weather;
 import org.springframework.http.HttpEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class WeatherApiClientImpl implements WeatherApiClient {
@@ -40,7 +42,7 @@ public class WeatherApiClientImpl implements WeatherApiClient {
         try {
             return objectMapper.readValue(response.getBody(), CurrentWeather.class);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         return null;
     }
@@ -65,7 +67,7 @@ public class WeatherApiClientImpl implements WeatherApiClient {
         try {
             return objectMapper.readValue(response.getBody(), Weather.class);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         return null;
     }
@@ -91,7 +93,7 @@ public class WeatherApiClientImpl implements WeatherApiClient {
         try {
             return objectMapper.readValue(response.getBody(), Weather.class);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         return null;
     }
