@@ -23,6 +23,7 @@ public class SimpleJdbcOperationsConfiguration {
         return new SimpleJdbcInsert(dataSource)
                 .withTableName("weather")
                 .usingColumns("flight_id", "time", "temperature", "wind_speed",
-                        "pressure", "humidity", "precip", "wind_gust");
+                        "pressure", "humidity", "precip", "wind_gust")
+                .usingGeneratedKeyColumns("id");
     }
 }
