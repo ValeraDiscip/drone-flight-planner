@@ -14,7 +14,7 @@ public class SimpleJdbcOperationsConfiguration {
     public SimpleJdbcInsertOperations flightSimpleJdbcOperations(DataSource dataSource) {
         return new SimpleJdbcInsert(dataSource)
                 .withTableName("flight")
-                .usingColumns("client_id", "time_of_flight", "successful")
+                .usingColumns("user_id", "time_of_flight", "successful")
                 .usingGeneratedKeyColumns("id");
     }
 

@@ -13,15 +13,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
-public class ClientDaoImpl implements ClientDao {
+public class UserDaoImpl implements UserDao {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsertOperations flightSimpleJdbcOperations;
     private final SimpleJdbcInsertOperations weatherSimpleJdbcOperations;
 
-    public Parameter getParameterByClientId(Integer clientId) {
+    public Parameter getParameterByUserId(Integer userId) {
         try {
-            return jdbcTemplate.queryForObject("SELECT client_id, language, location, min_temperature, max_temperature," +
-                    " max_wind_speed, max_wind_gust, max_humidity, max_precip, max_pressure FROM parameter WHERE client_id = ?", new ParameterMapper(), clientId);
+            return jdbcTemplate.queryForObject("SELECT user_id, language, location, min_temperature, max_temperature," +
+                    " max_wind_speed, max_wind_gust, max_humidity, max_precip, max_pressure FROM parameter WHERE user_id = ?", new ParameterMapper(), userId);
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
@@ -31,7 +31,7 @@ public class ClientDaoImpl implements ClientDao {
     public void saveFlightAndWeather(Flight flight) {
 
         MapSqlParameterSource flightParameters = new MapSqlParameterSource();
-        flightParameters.addValue("client_id", flight.getClientId());
+        flightParameters.addValue("user_id", flight.getUserId());
         flightParameters.addValue("time_of_flight", flight.getTimeOfFlight());
         flightParameters.addValue("successful", flight.getSuccessful());
 

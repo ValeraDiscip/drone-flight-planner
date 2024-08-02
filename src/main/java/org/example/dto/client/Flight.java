@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Data
 public class Flight {
     private Integer id;
-    private Integer clientId;
+    private Integer userId;
     private LocalDateTime timeOfFlight;
     private Boolean successful;
     private HourWeatherForecast hourWeatherForecast;

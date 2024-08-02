@@ -4,14 +4,14 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet id="create-table-client" author="Valera">
+    <changeSet id="create-table-user" author="Valera">
         <preConditions>
             <not>
-                <tableExists tableName="client"/>
+                <tableExists tableName="user"/>
             </not>
         </preConditions>
         <sql>
-            CREATE TABLE client
+            CREATE TABLE "user"
             (
                 id SERIAL PRIMARY KEY NOT NULL
             )
@@ -29,7 +29,7 @@
             CREATE TABLE parameter
             (
                 id              SERIAL PRIMARY KEY         NOT NULL,
-                client_id       INT REFERENCES client (id) NOT NULL,
+                user_id         INT REFERENCES "user" (id) NOT NULL,
                 language        VARCHAR(20)                NOT NULL,
                 location        VARCHAR(20)                NOT NULL,
                 min_temperature DOUBLE PRECISION           NOT NULL,
@@ -53,7 +53,7 @@
             CREATE TABLE flight
             (
                 id             SERIAL PRIMARY KEY         NOT NULL,
-                client_id      INT REFERENCES client (id) NOT NULL,
+                user_id        INT REFERENCES "user" (id) NOT NULL,
                 time_of_flight TIMESTAMP                  NOT NULL,
                 successful     BOOLEAN                    NOT NULL
             )
