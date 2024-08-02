@@ -3,7 +3,7 @@ package org.example.dto.client;
 import lombok.Data;
 
 @Data
-public class Client {
-    private int id;
+public class User {
+    private Integer id;
     private Parameter parameters;
 }
