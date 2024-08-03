@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-public class WeatherControllerImpl implements WeatherController {
+public class FlightControllerImpl implements FlightController {
     private final WeatherService weatherService;
 
     @Override
