@@ -3,11 +3,13 @@ package org.example.service;
 import lombok.RequiredArgsConstructor;
 import org.example.dao.UserDao;
 import org.example.dto.FlightPossibilityResult;
-import org.example.dto.client.Flight;
-import org.example.dto.client.Parameter;
+import org.example.dto.FlightDto;
+import org.example.entity.Flight;
+import org.example.entity.Parameter;
 import org.example.dto.weather.forecast.HourWeatherForecast;
 import org.example.dto.weather.current.CurrentWeather;
 import org.example.dto.weather.forecast.Weather;
+import org.example.mapper.FlightMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -109,7 +111,7 @@ public class WeatherServiceImpl implements WeatherService {
         return flightPossibilityResult;
     }
 
-    public void saveFlightAndWeather(Integer userId, LocalDateTime timeOfFlight, Boolean successful) {
+    public FlightDto saveFlightAndWeather(Integer userId, LocalDateTime timeOfFlight, Boolean successful) {
         Parameter parameters = userDao.getParameterByUserId(userId);
 
         LocalDate localDate = LocalDate.of(timeOfFlight.getYear(), timeOfFlight.getMonth(), timeOfFlight.getDayOfMonth());
@@ -125,5 +127,7 @@ public class WeatherServiceImpl implements WeatherService {
         flight.setHourWeatherForecast(weatherDuringTheFlight);
 
         userDao.saveFlightAndWeather(flight);
+
+        return FlightMapper.flightToFlightDto(flight);
     }
 }

@@ -3,7 +3,6 @@ package org.example.dto;
 import lombok.Data;
 import org.example.dto.weather.current.CurrentWeather;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data

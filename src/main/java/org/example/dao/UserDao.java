@@ -1,10 +1,10 @@
 package org.example.dao;
 
-import org.example.dto.client.Flight;
-import org.example.dto.client.Parameter;
+import org.example.entity.Flight;
+import org.example.entity.Parameter;
 
 public interface UserDao {
     Parameter getParameterByUserId(Integer userId);
 
-    void saveFlightAndWeather(Flight flight);
+    Flight saveFlightAndWeather(Flight flight);
 }

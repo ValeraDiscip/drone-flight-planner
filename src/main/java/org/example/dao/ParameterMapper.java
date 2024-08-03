@@ -1,6 +1,6 @@
 package org.example.dao;
 
-import org.example.dto.client.Parameter;
+import org.example.entity.Parameter;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
