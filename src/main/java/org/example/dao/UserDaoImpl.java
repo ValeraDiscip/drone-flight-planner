@@ -1,8 +1,8 @@
 package org.example.dao;
 
 import lombok.RequiredArgsConstructor;
-import org.example.dto.client.Flight;
-import org.example.dto.client.Parameter;
+import org.example.entity.Flight;
+import org.example.entity.Parameter;
 import org.example.dto.weather.forecast.HourWeatherForecast;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -28,7 +28,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Transactional
-    public void saveFlightAndWeather(Flight flight) {
+    public Flight saveFlightAndWeather(Flight flight) {
 
         MapSqlParameterSource flightParameters = new MapSqlParameterSource();
         flightParameters.addValue("user_id", flight.getUserId());
@@ -50,5 +50,8 @@ public class UserDaoImpl implements UserDao {
         weatherParameters.addValue("wind_gust", weather.getWindGust());
 
         weatherSimpleJdbcOperations.execute(weatherParameters);
+
+        flight.setId(flightId.intValue());
+        return flight;
     }
 }

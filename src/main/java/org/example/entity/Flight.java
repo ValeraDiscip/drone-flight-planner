@@ -1,4 +1,4 @@
-package org.example.dto.client;
+package org.example.entity;
 
 import lombok.Data;
 import org.example.dto.weather.forecast.HourWeatherForecast;
