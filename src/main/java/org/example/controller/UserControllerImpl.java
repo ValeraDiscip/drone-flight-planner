@@ -5,7 +5,9 @@ import org.example.dto.request.RegisterRequest;
 import org.example.entity.User;
 import org.example.mapper.UserMapper;
 import org.example.service.user.UserService;
+import org.springframework.web.bind.annotation.RestController;
 
+@RestController
 @RequiredArgsConstructor
 public class UserControllerImpl implements UserController {
     private final UserService userService;
