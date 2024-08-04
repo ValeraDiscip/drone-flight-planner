@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.entity.Flight;
 import org.example.entity.Parameter;
 import org.example.dto.weather.forecast.HourWeatherForecast;
+import org.example.entity.User;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -17,6 +18,7 @@ public class UserDaoImpl implements UserDao {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsertOperations flightSimpleJdbcOperations;
     private final SimpleJdbcInsertOperations weatherSimpleJdbcOperations;
+    private final SimpleJdbcInsertOperations userSimpleJdbcOperations;
 
     public Parameter getParameterByUserId(Integer userId) {
         try {
@@ -53,5 +55,26 @@ public class UserDaoImpl implements UserDao {
 
         flight.setId(flightId.intValue());
         return flight;
+    }
+
+    @Override
+    public User getUserByLogin(String login) {
+        User foundUser;
+        try {
+            foundUser = jdbcTemplate.queryForObject("SELECT id, login, password FROM \"user\" WHERE login = ?", new UserMapper(), login);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+        foundUser.setParameters(getParameterByUserId(foundUser.getId()));
+        return foundUser;
+    }
+
+    @Override
+    public void saveUser(User user) {
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("login", user.getLogin());
+        parameters.addValue("password", user.getPassword());
+
+        userSimpleJdbcOperations.execute(parameters);
     }
 }
