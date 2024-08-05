@@ -82,18 +82,18 @@
         </sql>
     </changeSet>
 
-    <changeSet id="#8-add-login-to-user" author="Valera">
+    <changeSet id="#8-add-username-to-user" author="Valera">
         <preConditions>
             <and>
                 <tableExists tableName="user"/>
                 <not>
-                    <columnExists tableName="user" columnName="login"/>
+                    <columnExists tableName="user" columnName="username"/>
                 </not>
             </and>
         </preConditions>
         <sql>
             ALTER table "user"
-                add login VARCHAR(30) NOT NULL
+                add username VARCHAR(30) NOT NULL
         </sql>
     </changeSet>
 

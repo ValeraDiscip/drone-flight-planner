@@ -7,7 +7,7 @@ public class UserMapper {
 
     public static User mapToUser(RegisterRequest registerRequest) {
         return User.builder()
-                .login(registerRequest.getLogin())
+                .username(registerRequest.getUsername())
                 .password(registerRequest.getPassword())
                 .build();
     }

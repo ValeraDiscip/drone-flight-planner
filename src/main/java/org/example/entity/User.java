@@ -7,7 +7,7 @@ import lombok.Data;
 @Builder
 public class User {
     private Integer id;
-    private String login;
+    private String username;
     private String password;
     private Parameter parameters;
 }

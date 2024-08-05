@@ -58,10 +58,10 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public User getUserByLogin(String login) {
+    public User getUserByUsername(String username) {
         User foundUser;
         try {
-            foundUser = jdbcTemplate.queryForObject("SELECT id, login, password FROM \"user\" WHERE login = ?", new UserMapper(), login);
+            foundUser = jdbcTemplate.queryForObject("SELECT id, username, password FROM \"user\" WHERE username = ?", new UserMapper(), username);
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
@@ -72,7 +72,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public void saveUser(User user) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
-        parameters.addValue("login", user.getLogin());
+        parameters.addValue("username", user.getUsername());
         parameters.addValue("password", user.getPassword());
 
         userSimpleJdbcOperations.execute(parameters);

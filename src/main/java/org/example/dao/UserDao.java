@@ -9,7 +9,7 @@ public interface UserDao {
 
     Flight saveFlightAndWeather(Flight flight);
 
-    User getUserByLogin(String login);
+    User getUserByUsername(String username);
 
     void saveUser(User user);
 }

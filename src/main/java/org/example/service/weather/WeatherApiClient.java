@@ -1,4 +1,4 @@
-package org.example.service;
+package org.example.service.weather;
 
 import org.example.dto.weather.current.CurrentWeather;
 import org.example.dto.weather.forecast.Weather;
