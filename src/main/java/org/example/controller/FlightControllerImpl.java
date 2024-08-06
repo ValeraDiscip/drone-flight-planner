@@ -15,11 +15,11 @@ public class FlightControllerImpl implements FlightController {
 
     @Override
     public FlightPossibilityResult evaluateFlightPossibility() {
-        return weatherService.evaluateFlightPossibility(1);
+        return weatherService.evaluateFlightPossibility(15);
     }
 
     @Override
     public FlightDto addFlight(LocalDateTime timeOfFlight, Boolean successful) {
-        return weatherService.saveFlightAndWeather(1, timeOfFlight, successful);
+        return weatherService.saveFlightAndWeather(15, timeOfFlight, successful);
     }
 }

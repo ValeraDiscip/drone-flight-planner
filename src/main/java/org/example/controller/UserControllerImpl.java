@@ -1,7 +1,8 @@
 package org.example.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.example.dto.request.RegisterRequest;
+import org.example.dto.request.RegisterUserRequest;
+import org.example.dto.response.UserResponse;
 import org.example.entity.User;
 import org.example.mapper.UserMapper;
 import org.example.service.user.UserService;
@@ -13,9 +14,8 @@ public class UserControllerImpl implements UserController {
     private final UserService userService;
 
     @Override
-    public String save(RegisterRequest registerRequest) {
-        User userToRegister = UserMapper.mapToUser(registerRequest);
-        userService.saveUser(userToRegister);
-        return "Пользователь успешно зарегистрирован";
+    public UserResponse save(RegisterUserRequest registerUserRequest) {
+        User userToRegister = UserMapper.mapToUser(registerUserRequest);
+        return userService.saveUser(userToRegister);
     }
 }

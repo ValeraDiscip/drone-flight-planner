@@ -93,7 +93,7 @@
         </preConditions>
         <sql>
             ALTER table "user"
-                add username VARCHAR(30) NOT NULL
+                add username VARCHAR(30) NOT NULL UNIQUE
         </sql>
     </changeSet>
 

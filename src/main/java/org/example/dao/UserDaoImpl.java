@@ -1,6 +1,7 @@
 package org.example.dao;
 
 import lombok.RequiredArgsConstructor;
+import org.example.exception.UserAlreadyExistsException;
 import org.example.entity.Flight;
 import org.example.entity.Parameter;
 import org.example.dto.weather.forecast.HourWeatherForecast;
@@ -65,16 +66,26 @@ public class UserDaoImpl implements UserDao {
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
+        if (foundUser == null) {
+            return null;
+        }
         foundUser.setParameters(getParameterByUserId(foundUser.getId()));
         return foundUser;
     }
 
     @Override
-    public void saveUser(User user) {
+    public User saveUser(User user) {
+
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("username", user.getUsername());
         parameters.addValue("password", user.getPassword());
-
-        userSimpleJdbcOperations.execute(parameters);
+        Number userId;
+        try {
+            userId = userSimpleJdbcOperations.executeAndReturnKey(parameters);
+        } catch (Exception e) {
+            throw new UserAlreadyExistsException("Пользователь с таким именем уже существует");
+        }
+        user.setId(userId.intValue());
+        return user;
     }
 }

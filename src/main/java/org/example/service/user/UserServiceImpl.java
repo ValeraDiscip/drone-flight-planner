@@ -2,7 +2,9 @@ package org.example.service.user;
 
 import lombok.RequiredArgsConstructor;
 import org.example.dao.UserDao;
+import org.example.dto.response.UserResponse;
 import org.example.entity.User;
+import org.example.mapper.UserMapper;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -26,11 +28,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return org.springframework.security.core.userdetails.User.builder()
                 .username(foundUser.getUsername())
                 .password(foundUser.getPassword())
+                .authorities("ROLE_USER")
                 .build();
     }
 
-    public void saveUser(User user) {
+    public UserResponse saveUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userDao.saveUser(user);
+        User savedUser = userDao.saveUser(user);
+        return UserMapper.mapToUserResponse(savedUser);
     }
 }
