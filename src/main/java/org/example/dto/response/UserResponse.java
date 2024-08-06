@@ -1,13 +1,13 @@
-package org.example.entity;
+package org.example.dto.response;
 
 import lombok.Builder;
 import lombok.Data;
+import org.example.entity.Parameter;
 
 @Data
 @Builder
-public class User {
+public class UserResponse {
     private Integer id;
     private String username;
-    private String password;
     private Parameter parameters;
 }

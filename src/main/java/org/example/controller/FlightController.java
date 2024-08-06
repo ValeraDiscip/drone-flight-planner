@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.time.LocalDateTime;
 
-@RequestMapping("/flight")
+@RequestMapping("flight")
 public interface FlightController {
     @GetMapping("/evaluateCurrentPossibility")
     FlightPossibilityResult evaluateFlightPossibility();

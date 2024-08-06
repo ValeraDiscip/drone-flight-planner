@@ -3,7 +3,7 @@ package org.example.controller;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.FlightDto;
 import org.example.dto.FlightPossibilityResult;
-import org.example.service.WeatherService;
+import org.example.service.weather.WeatherService;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
@@ -15,11 +15,11 @@ public class FlightControllerImpl implements FlightController {
 
     @Override
     public FlightPossibilityResult evaluateFlightPossibility() {
-        return weatherService.evaluateFlightPossibility(1);
+        return weatherService.evaluateFlightPossibility(15);
     }
 
     @Override
     public FlightDto addFlight(LocalDateTime timeOfFlight, Boolean successful) {
-        return weatherService.saveFlightAndWeather(1, timeOfFlight, successful);
+        return weatherService.saveFlightAndWeather(15, timeOfFlight, successful);
     }
 }

@@ -1,4 +1,4 @@
-package org.example.service;
+package org.example.service.weather;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

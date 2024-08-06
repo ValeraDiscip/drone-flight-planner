@@ -82,4 +82,34 @@
         </sql>
     </changeSet>
 
+    <changeSet id="#8-add-username-to-user" author="Valera">
+        <preConditions>
+            <and>
+                <tableExists tableName="user"/>
+                <not>
+                    <columnExists tableName="user" columnName="username"/>
+                </not>
+            </and>
+        </preConditions>
+        <sql>
+            ALTER table "user"
+                add username VARCHAR(30) NOT NULL UNIQUE
+        </sql>
+    </changeSet>
+
+    <changeSet id="#8-add-password-to-user" author="Valera">
+        <preConditions>
+            <and>
+                <tableExists tableName="user"/>
+                <not>
+                    <columnExists tableName="user" columnName="password"/>
+                </not>
+            </and>
+        </preConditions>
+        <sql>
+            ALTER table "user"
+                add password VARCHAR(200) NOT NULL
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>

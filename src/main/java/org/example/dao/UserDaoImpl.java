@@ -1,9 +1,11 @@
 package org.example.dao;
 
 import lombok.RequiredArgsConstructor;
+import org.example.exception.UserAlreadyExistsException;
 import org.example.entity.Flight;
 import org.example.entity.Parameter;
 import org.example.dto.weather.forecast.HourWeatherForecast;
+import org.example.entity.User;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -17,6 +19,7 @@ public class UserDaoImpl implements UserDao {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsertOperations flightSimpleJdbcOperations;
     private final SimpleJdbcInsertOperations weatherSimpleJdbcOperations;
+    private final SimpleJdbcInsertOperations userSimpleJdbcOperations;
 
     public Parameter getParameterByUserId(Integer userId) {
         try {
@@ -53,5 +56,36 @@ public class UserDaoImpl implements UserDao {
 
         flight.setId(flightId.intValue());
         return flight;
+    }
+
+    @Override
+    public User getUserByUsername(String username) {
+        User foundUser;
+        try {
+            foundUser = jdbcTemplate.queryForObject("SELECT id, username, password FROM \"user\" WHERE username = ?", new UserMapper(), username);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+        if (foundUser == null) {
+            return null;
+        }
+        foundUser.setParameters(getParameterByUserId(foundUser.getId()));
+        return foundUser;
+    }
+
+    @Override
+    public User saveUser(User user) {
+
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("username", user.getUsername());
+        parameters.addValue("password", user.getPassword());
+        Number userId;
+        try {
+            userId = userSimpleJdbcOperations.executeAndReturnKey(parameters);
+        } catch (Exception e) {
+            throw new UserAlreadyExistsException("Пользователь с таким именем уже существует");
+        }
+        user.setId(userId.intValue());
+        return user;
     }
 }

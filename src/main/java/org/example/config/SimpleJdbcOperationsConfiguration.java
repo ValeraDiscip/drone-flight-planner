@@ -25,4 +25,12 @@ public class SimpleJdbcOperationsConfiguration {
                 .usingColumns("flight_id", "time", "temperature", "wind_speed",
                         "pressure", "humidity", "precip", "wind_gust");
     }
+
+    @Bean
+    public SimpleJdbcInsertOperations userSimpleJdbcOperations(DataSource dataSource) {
+        return new SimpleJdbcInsert(dataSource)
+                .withTableName("\"user\"")
+                .usingColumns( "username", "password")
+                .usingGeneratedKeyColumns("id");
+    }
 }
