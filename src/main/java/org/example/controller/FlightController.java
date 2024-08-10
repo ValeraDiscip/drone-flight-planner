@@ -11,8 +11,8 @@ import java.time.LocalDateTime;
 @RequestMapping("flight")
 public interface FlightController {
     @GetMapping("/evaluateCurrentPossibility")
-    FlightPossibilityResult evaluateFlightPossibility();
+    FlightPossibilityResult evaluateFlightPossibility(Integer userId);
 
     @PostMapping("/add")
-    FlightDto addFlight(LocalDateTime timeOfFlight, Boolean successful);
+    FlightDto addFlight(Integer userId, LocalDateTime timeOfFlight, Boolean successful);
 }

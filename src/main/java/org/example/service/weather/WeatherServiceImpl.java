@@ -53,7 +53,7 @@ public class WeatherServiceImpl implements WeatherService {
                     + userParameters.getMaxTemperature()
                     + ". Текущая температура = " + currentWeather.getCurrent().getTemperature()
                     + " (выше допустимой на "
-                    + (userParameters.getMaxTemperature() - currentWeather.getCurrent().getTemperature()) + ")");
+                    + (currentWeather.getCurrent().getTemperature() - userParameters.getMaxTemperature()) + ")");
         }
 
         if (currentWeather.getCurrent().getWindSpeed() > userParameters.getMaxWindSpeed()) {
