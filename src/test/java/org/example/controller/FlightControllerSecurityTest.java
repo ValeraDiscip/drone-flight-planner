@@ -11,7 +11,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithAnonymousUser;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -41,12 +40,12 @@ public class FlightControllerSecurityTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockFlightPlannerUser
     public void authorizedUserEvaluateFlightPossibilityTest() throws Exception {
         when(weatherService.evaluateFlightPossibility(1))
                 .thenReturn(new FlightPossibilityResult());
 
-        mockMvc.perform(get("http://localhost:8080/flight/evaluateCurrentPossibility").param("userId", "1"))
+        mockMvc.perform(get("http://localhost:8080/flight/evaluateCurrentPossibility"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -60,12 +59,12 @@ public class FlightControllerSecurityTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockFlightPlannerUser
     public void authorizedUserAddFlightTest() throws Exception {
         when(weatherService.saveFlightAndWeather(1, LocalDateTime.of(2024, 1, 1, 1,1), true))
                 .thenReturn(FlightDto.builder().build());
 
-        mockMvc.perform(post("http://localhost:8080/flight/add").param("userId", "1")
+        mockMvc.perform(post("http://localhost:8080/flight/add")
                         .param("timeOfFlight", "2024-01-01T01:01")
                         .param("successful", "true"))
                 .andDo(print())

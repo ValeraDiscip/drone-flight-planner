@@ -1,6 +1,5 @@
 package org.example.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.dto.weather.current.Current;
 import org.example.dto.weather.current.CurrentWeather;
 import org.example.dto.weather.forecast.DayWeatherForecast;
@@ -13,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
@@ -33,46 +31,42 @@ public class FlightControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @MockBean
     private WeatherApiClient weatherApiClient;
 
     @Test
-    @WithMockUser
+    @WithMockFlightPlannerUser
     public void evaluateFlightPossibilityWithAppropriateWeatherTest() throws Exception {
         when(weatherApiClient.getCurrentWeather("Krasnodar"))
-                .thenReturn(getCurrentWeather(true));
+                .thenReturn(buildAppropriateCurrentWeather());
 
-        mockMvc.perform(get("http://localhost:8080/flight/evaluateCurrentPossibility").param("userId", "1"))
+        mockMvc.perform(get("http://localhost:8080/flight/evaluateCurrentPossibility"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.conclusion").value("В настоящий момент полет является безопасным!"));
-
     }
 
     @Test
-    @WithMockUser
+    @WithMockFlightPlannerUser
     public void evaluateFlightPossibilityWithInappropriateWeatherTest() throws Exception {
         when(weatherApiClient.getCurrentWeather("Krasnodar"))
-                .thenReturn(getCurrentWeather(false));
+                .thenReturn(buildInappropriateCurrentWeather());
 
-        mockMvc.perform(get("http://localhost:8080/flight/evaluateCurrentPossibility").param("userId", "1"))
+        mockMvc.perform(get("http://localhost:8080/flight/evaluateCurrentPossibility"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON))
-                .andExpect(jsonPath("$.inappropriateWeatherConditionsInfo").value(getInappropriateWeatherConditionsInfo()))
+                .andExpect(jsonPath("$.inappropriateWeatherConditionsInfo").value(buildInappropriateWeatherConditionsInfo()))
                 .andExpect(jsonPath("$.conclusion").value("В настоящий момент полет не рекомендуется. " +
                         "Значения погодных условий не соответствуют выставленным параметрам."));
     }
 
     @Test
-    @WithMockUser
+    @WithMockFlightPlannerUser()
     public void addNewFlightTest() throws Exception {
         when(weatherApiClient.getWeatherHistory("Krasnodar", "RU", 1, LocalDate.of(2020,1,1)))
-                .thenReturn(getWeather());
+                .thenReturn(buildWeather());
 
-        mockMvc.perform(post("http://localhost:8080/flight/add").param("userId", "1")
+        mockMvc.perform(post("http://localhost:8080/flight/add")
                 .param("timeOfFlight", String.valueOf(LocalDateTime.of(2020,1,1,1,1)))
                 .param("successful", "true"))
                 .andExpect(status().isOk())
@@ -82,7 +76,7 @@ public class FlightControllerTest {
                 .andExpect(jsonPath("$.timeOfFlight").value("2020-01-01 01:01"));
     }
 
-    private Weather getWeather () {
+    private Weather buildWeather() {
         Weather weather = new Weather();
         Forecast forecast = new Forecast();
         DayWeatherForecast dayWeatherForecast = new DayWeatherForecast();
@@ -101,10 +95,9 @@ public class FlightControllerTest {
     }
 
 
-    private CurrentWeather getCurrentWeather(Boolean appropriate) {
+    private CurrentWeather buildAppropriateCurrentWeather() {
         CurrentWeather currentWeather = new CurrentWeather();
         Current current = new Current();
-        if (appropriate) {
             current.setTemperature(25.0);
             current.setWindSpeed(18.0);
             current.setWindGust(18.0);
@@ -112,19 +105,25 @@ public class FlightControllerTest {
             current.setPrecip(0.1);
             current.setPressure(700.0);
             currentWeather.setCurrent(current);
-        } else {
-            current.setTemperature(35.0);
-            current.setWindSpeed(21.0);
-            current.setWindGust(30.0);
-            current.setHumidity(99.0);
-            current.setPrecip(2.0);
-            current.setPressure(1100.0);
-            currentWeather.setCurrent(current);
-        }
+
         return currentWeather;
     }
 
-    private List<String> getInappropriateWeatherConditionsInfo() {
+    private CurrentWeather buildInappropriateCurrentWeather() {
+        CurrentWeather currentWeather = new CurrentWeather();
+        Current current = new Current();
+        current.setTemperature(35.0);
+        current.setWindSpeed(21.0);
+        current.setWindGust(30.0);
+        current.setHumidity(99.0);
+        current.setPrecip(2.0);
+        current.setPressure(1100.0);
+        currentWeather.setCurrent(current);
+
+        return currentWeather;
+    }
+
+    private List<String> buildInappropriateWeatherConditionsInfo() {
         List<String> inappropriateWeatherConditionsInfo = new ArrayList<>();
         inappropriateWeatherConditionsInfo.add("Максимально допустимая температура для полета = 30.0. Текущая температура = 35.0 (выше допустимой на 5.0)");
         inappropriateWeatherConditionsInfo.add("Максимально допустимая скорость ветра для полета = 20.0. Текущая скорость ветра = 21.0 (выше допустимой на 1.0)");
