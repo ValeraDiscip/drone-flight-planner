@@ -2,6 +2,7 @@ package org.example.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.dto.FlightDto;
+import org.example.dto.FlightPlannerUser;
 import org.example.dto.FlightPossibilityResult;
 import org.example.service.weather.WeatherService;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,12 +15,12 @@ public class FlightControllerImpl implements FlightController {
     private final WeatherService weatherService;
 
     @Override
-    public FlightPossibilityResult evaluateFlightPossibility() {
-        return weatherService.evaluateFlightPossibility(15);
+    public FlightPossibilityResult evaluateFlightPossibility(FlightPlannerUser flightPlannerUser) {
+        return weatherService.evaluateFlightPossibility(flightPlannerUser.getId());
     }
 
     @Override
-    public FlightDto addFlight(LocalDateTime timeOfFlight, Boolean successful) {
-        return weatherService.saveFlightAndWeather(15, timeOfFlight, successful);
+    public FlightDto addFlight(FlightPlannerUser flightPlannerUser, LocalDateTime timeOfFlight, Boolean successful) {
+        return weatherService.saveFlightAndWeather(flightPlannerUser.getId(), timeOfFlight, successful);
     }
 }
