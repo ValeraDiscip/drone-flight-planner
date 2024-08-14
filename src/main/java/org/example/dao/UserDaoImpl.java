@@ -1,6 +1,7 @@
 package org.example.dao;
 
 import lombok.RequiredArgsConstructor;
+import org.example.dto.ScheduledFlight;
 import org.example.exception.UserAlreadyExistsException;
 import org.example.entity.Flight;
 import org.example.entity.Parameter;
@@ -87,5 +88,18 @@ public class UserDaoImpl implements UserDao {
         }
         user.setId(userId.intValue());
         return user;
+    }
+
+    @Override
+    public ScheduledFlight getScheduledFlightByUserId(Integer userId) {
+        ScheduledFlight scheduledFlight;
+        try {
+            scheduledFlight = jdbcTemplate.queryForObject("SELECT id, user_id, departure_time" +
+                    " FROM scheduled_flight WHERE user_id = ?", new ScheduledFlightMapper(), userId);
+        }
+        catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+        return scheduledFlight;
     }
 }

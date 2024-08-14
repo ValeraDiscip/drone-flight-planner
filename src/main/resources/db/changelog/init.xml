@@ -112,4 +112,23 @@
         </sql>
     </changeSet>
 
+    <changeSet id="#15-create-table-scheduled_flight" author="Valera">
+        <preConditions>
+            <and>
+                <not>
+                    <tableExists tableName="scheduled_flight"/>
+                </not>
+                <tableExists tableName="user"/>
+            </and>
+        </preConditions>
+        <sql>
+            CREATE TABLE scheduled_flight
+            (
+                id             SERIAL PRIMARY KEY         NOT NULL,
+                user_id        INT REFERENCES "user" (id) NOT NULL,
+                departure_time TIMESTAMP                  NOT NULL
+            )
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>

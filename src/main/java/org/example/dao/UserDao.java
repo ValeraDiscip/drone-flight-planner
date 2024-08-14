@@ -1,5 +1,6 @@
 package org.example.dao;
 
+import org.example.dto.ScheduledFlight;
 import org.example.entity.Flight;
 import org.example.entity.Parameter;
 import org.example.entity.User;
@@ -12,4 +13,6 @@ public interface UserDao {
     User getUserByUsername(String username);
 
     User saveUser(User user);
+
+    ScheduledFlight getScheduledFlightByUserId(Integer userId);
 }
