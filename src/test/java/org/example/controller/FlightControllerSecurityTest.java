@@ -42,7 +42,7 @@ public class FlightControllerSecurityTest {
     @Test
     @WithMockFlightPlannerUser
     public void authorizedUserEvaluateFlightPossibilityTest() throws Exception {
-        when(weatherService.evaluateFlightPossibility(1))
+        when(weatherService.evaluateCurrentFlightPossibility(1))
                 .thenReturn(new FlightPossibilityResult());
 
         mockMvc.perform(get("http://localhost:8080/flight/evaluateCurrentPossibility"))

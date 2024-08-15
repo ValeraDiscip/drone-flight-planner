@@ -16,7 +16,7 @@ public class FlightControllerImpl implements FlightController {
 
     @Override
     public FlightPossibilityResult evaluateFlightPossibility(FlightPlannerUser flightPlannerUser) {
-        return weatherService.evaluateFlightPossibility(flightPlannerUser.getId());
+        return weatherService.evaluateCurrentFlightPossibility(flightPlannerUser.getId());
     }
 
     @Override

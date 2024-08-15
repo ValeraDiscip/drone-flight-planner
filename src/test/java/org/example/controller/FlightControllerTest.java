@@ -125,12 +125,12 @@ public class FlightControllerTest {
 
     private List<String> buildInappropriateWeatherConditionsInfo() {
         List<String> inappropriateWeatherConditionsInfo = new ArrayList<>();
-        inappropriateWeatherConditionsInfo.add("Максимально допустимая температура для полета = 30.0. Текущая температура = 35.0 (выше допустимой на 5.0)");
-        inappropriateWeatherConditionsInfo.add("Максимально допустимая скорость ветра для полета = 20.0. Текущая скорость ветра = 21.0 (выше допустимой на 1.0)");
-        inappropriateWeatherConditionsInfo.add("Максимально допустимые порывы ветра для полета = 25.0. Текущие порывы ветра = 30.0 (выше допустимых на 5.0)");
-        inappropriateWeatherConditionsInfo.add("Максимально допустимая влажность для полета = 80.0. Текущая влажность = 99.0 (выше допустимой на 19.0)");
-        inappropriateWeatherConditionsInfo.add("Максимально допустимое кол-во осадков для полета = 80.0. Текущее кол-во осадков = 99.0 (выше допустимого на 19.0)");
-        inappropriateWeatherConditionsInfo.add("Максимально допустимое давление для полета = 1000.0. Текущее давление = 1100.0 (выше допустимого на 100.0)");
+        inappropriateWeatherConditionsInfo.add("Максимально допустимая температура для полета = 30.0. Температура по прогнозу = 35.0 (выше допустимой на 5.0)");
+        inappropriateWeatherConditionsInfo.add("Максимально допустимая скорость ветра для полета = 20.0. Скорость ветра по прогнозу = 21.0 (выше допустимой на 1.0)");
+        inappropriateWeatherConditionsInfo.add("Максимально допустимые порывы ветра для полета = 25.0. Порывы ветра по прогнозу = 30.0 (выше допустимых на 5.0)");
+        inappropriateWeatherConditionsInfo.add("Максимально допустимая влажность для полета = 80.0. Влажность по прогнозу = 99.0 (выше допустимой на 19.0)");
+        inappropriateWeatherConditionsInfo.add("Максимально допустимое кол-во осадков для полета = 80.0. Кол-во осадков по прогнозу = 99.0 (выше допустимого на 19.0)");
+        inappropriateWeatherConditionsInfo.add("Максимально допустимое давление для полета = 1000.0. Давление по прогнозу = 1100.0 (выше допустимого на 100.0)");
         return inappropriateWeatherConditionsInfo;
     }
 }
