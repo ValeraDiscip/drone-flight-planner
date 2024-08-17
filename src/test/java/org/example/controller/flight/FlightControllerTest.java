@@ -1,5 +1,6 @@
-package org.example.controller;
+package org.example.controller.flight;
 
+import org.example.controller.WithMockFlightPlannerUser;
 import org.example.dto.weather.current.Current;
 import org.example.dto.weather.current.CurrentWeather;
 import org.example.dto.weather.forecast.DayWeatherForecast;
@@ -62,11 +63,11 @@ public class FlightControllerTest {
 
     @Test
     @WithMockFlightPlannerUser()
-    public void addNewFlightTest() throws Exception {
+    public void saveNewFlightTest() throws Exception {
         when(weatherApiClient.getWeatherHistory("Krasnodar", "RU", 1, LocalDate.of(2020,1,1)))
                 .thenReturn(buildWeather());
 
-        mockMvc.perform(post("http://localhost:8080/flight/add")
+        mockMvc.perform(post("http://localhost:8080/flight/save")
                 .param("timeOfFlight", String.valueOf(LocalDateTime.of(2020,1,1,1,1)))
                 .param("successful", "true"))
                 .andExpect(status().isOk())
