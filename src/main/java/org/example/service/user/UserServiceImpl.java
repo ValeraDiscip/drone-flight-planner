@@ -37,4 +37,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         User savedUser = userDao.saveUser(user);
         return UserMapper.mapToUserResponse(savedUser);
     }
+
+    @Override
+    public void saveEmail(int userId, String email) {
+        userDao.saveEmail(userId, email);
+    }
 }

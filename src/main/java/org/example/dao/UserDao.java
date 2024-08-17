@@ -1,9 +1,11 @@
 package org.example.dao;
 
-import org.example.dto.ScheduledFlight;
+import org.example.entity.ScheduledFlight;
 import org.example.entity.Flight;
 import org.example.entity.Parameter;
 import org.example.entity.User;
+
+import java.util.List;
 
 public interface UserDao {
     Parameter getParameterByUserId(Integer userId);
@@ -14,5 +16,13 @@ public interface UserDao {
 
     User saveUser(User user);
 
-    ScheduledFlight getScheduledFlightByUserId(Integer userId);
+    List<ScheduledFlight> getScheduledFlights();
+
+    ScheduledFlight saveScheduledFlight(ScheduledFlight scheduledFlight);
+
+    String getEmailByUserId(Integer userId);
+
+    void saveEmail(int userId, String email);
+
+    void updateLastFlightPossibilityDecision(int userId, boolean lastFlightPossibilityDecision);
 }

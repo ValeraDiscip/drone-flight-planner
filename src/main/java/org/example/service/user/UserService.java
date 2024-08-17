@@ -5,4 +5,5 @@ import org.example.entity.User;
 
 public interface UserService {
    UserResponse saveUser(User user);
+   void saveEmail(int userId, String email);
 }

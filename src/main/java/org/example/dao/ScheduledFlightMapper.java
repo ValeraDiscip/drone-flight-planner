@@ -1,6 +1,6 @@
 package org.example.dao;
 
-import org.example.dto.ScheduledFlight;
+import org.example.entity.ScheduledFlight;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
@@ -12,7 +12,8 @@ public class ScheduledFlightMapper implements RowMapper<ScheduledFlight> {
         return ScheduledFlight.builder()
                 .flightId(resultSet.getInt("id"))
                 .userId(resultSet.getInt("user_id"))
-                .departureTime(resultSet.getTimestamp("departure_time").toLocalDateTime())
+                .timeOfFlight(resultSet.getTimestamp("time_of_flight").toLocalDateTime())
+                .lastFlightPossibilityDecision(resultSet.getBoolean("last_flight_possibility_decision"))
                 .build();
     }
 }

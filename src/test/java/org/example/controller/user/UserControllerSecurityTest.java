@@ -1,4 +1,4 @@
-package org.example.controller;
+package org.example.controller.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.config.security.SecurityConfig;

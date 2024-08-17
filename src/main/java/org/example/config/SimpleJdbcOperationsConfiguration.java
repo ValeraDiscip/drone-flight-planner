@@ -33,4 +33,12 @@ public class SimpleJdbcOperationsConfiguration {
                 .usingColumns( "username", "password")
                 .usingGeneratedKeyColumns("id");
     }
+
+    @Bean
+    public SimpleJdbcInsertOperations scheduledFlightSimpleJdbcOperations(DataSource dataSource) {
+        return new SimpleJdbcInsert(dataSource)
+                .withTableName("scheduled_flight")
+                .usingColumns("user_id", "time_of_flight", "last_flight_possibility_decision")
+                .usingGeneratedKeyColumns("id");
+    }
 }

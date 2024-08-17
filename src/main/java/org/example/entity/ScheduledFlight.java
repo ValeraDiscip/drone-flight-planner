@@ -1,4 +1,4 @@
-package org.example.dto;
+package org.example.entity;
 
 import lombok.Builder;
 import lombok.Data;
@@ -10,5 +10,6 @@ import java.time.LocalDateTime;
 public class ScheduledFlight {
     private int flightId;
     private int userId;
-    private LocalDateTime departureTime;
+    private LocalDateTime timeOfFlight;
+    private boolean lastFlightPossibilityDecision;
 }

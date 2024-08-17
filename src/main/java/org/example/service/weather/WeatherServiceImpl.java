@@ -39,7 +39,21 @@ public class WeatherServiceImpl implements WeatherService {
         return evaluateFlightPossibility(current, userParameters);
     }
 
-    public FlightPossibilityResult evaluateFutureFlightPossibility(HourWeatherForecast hourWeatherForecast, Parameter userParameter) {
+
+    public FlightPossibilityResult evaluateFutureFlightPossibility(int userId, LocalDateTime timeOfFlight) {
+
+        Parameter userParameter = userDao.getParameterByUserId(userId);
+
+        if (userParameter == null) {
+            return null;
+        }
+
+        Weather weatherForecast = weatherApiClient.getWeatherForecast(userParameter.getLocation(),
+                userParameter.getLanguage(), 1, timeOfFlight.toLocalDate());
+
+        HourWeatherForecast hourWeatherForecast = weatherForecast.getForecast().getDayWeatherForecast().get(0)
+                .getHourWeatherForecast().get(timeOfFlight.getHour());
+
         return evaluateFlightPossibility(hourWeatherForecast, userParameter);
     }
 
@@ -118,15 +132,15 @@ public class WeatherServiceImpl implements WeatherService {
                 flightPossibilityResult.setConclusion(((HourWeatherForecast) weatherInfo).getTime() + "полет не рекомендуется. " +
                         "Значения погодных условий не соответствуют выставленным параметрам.");
             }
-
-            flightPossibilityResult.setInappropriateWeatherConditionsInfo(inappropriateWeatherConditionsInfo);
-
-            return flightPossibilityResult;
         }
 
-        if (weatherInfo instanceof Current) {
-            flightPossibilityResult.setConclusion("В настоящий момент полет является безопасным!");
+        else {
+            if (weatherInfo instanceof Current) {
+                flightPossibilityResult.setConclusion("В настоящий момент полет является безопасным!");
+            }
         }
+        flightPossibilityResult.setInappropriateWeatherConditionsInfo(inappropriateWeatherConditionsInfo);
+
         return flightPossibilityResult;
     }
 
