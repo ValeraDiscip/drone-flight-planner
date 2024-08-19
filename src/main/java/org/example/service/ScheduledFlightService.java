@@ -5,8 +5,9 @@ import org.example.dao.UserDao;
 import org.example.dto.FlightPossibilityResult;
 import org.example.dto.scheduledflight.ScheduledFlightDto;
 import org.example.entity.ScheduledFlight;
+import org.example.exception.UserParameterNotFoundException;
 import org.example.mapper.ScheduledFlightMapper;
-import org.example.service.mail.FlightPlannerEmailService;
+import org.example.service.mail.EmailService;
 import org.example.service.weather.WeatherService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -20,11 +21,10 @@ import java.util.concurrent.TimeUnit;
 public class ScheduledFlightService {
     private final UserDao userDao;
     private final WeatherService weatherService;
-    private final FlightPlannerEmailService flightPlannerEmailService;
+    private final EmailService emailService;
 
-    @Scheduled(fixedRate = 1, timeUnit = TimeUnit.HOURS)
+    @Scheduled(fixedRateString = "${evaluateFlightPossibilityOnPlannedDay.schedule.fixedRate}", timeUnit = TimeUnit.SECONDS)
     public void evaluateFlightPossibilityOnPlannedDay() {
-
         List<ScheduledFlight> scheduledFlights = userDao.getScheduledFlights();
 
         for (ScheduledFlight scheduledFlight : scheduledFlights) {
@@ -32,30 +32,31 @@ public class ScheduledFlightService {
 
             if (flightPossibilityResult != null && flightPossibilityResult.getInappropriateWeatherConditionsInfo().isEmpty() != scheduledFlight.isLastFlightPossibilityDecision()) {
                 userDao.updateLastFlightPossibilityDecision(scheduledFlight.getUserId(), !scheduledFlight.isLastFlightPossibilityDecision());
-                String toEmail = userDao.getEmailByUserId(scheduledFlight.getUserId());
+                String toEmail = userDao.getUserById(scheduledFlight.getUserId()).getEmail();
+
                 if (toEmail != null) {
-                    flightPlannerEmailService.sendEmail(toEmail, "ИЗМЕНЕНЕНИЕ ПОГОДНЫХ УСЛОВИЙ НА ЗАПЛАНИРОВАННЫЙ ДЕНЬ ПОЛЕТА", flightPossibilityResult.toString());
+                    emailService.sendEmail(toEmail, "ИЗМЕНЕНЕНИЕ ПОГОДНЫХ УСЛОВИЙ НА ЗАПЛАНИРОВАННЫЙ ДЕНЬ ПОЛЕТА", flightPossibilityResult.toString());
                 }
             }
         }
     }
 
     public ScheduledFlightDto saveScheduledFlight(Integer userId, LocalDateTime timeOfFlight) {
-       FlightPossibilityResult flightPossibilityResult = weatherService.evaluateFutureFlightPossibility(userId, timeOfFlight);
+        FlightPossibilityResult flightPossibilityResult = weatherService.evaluateFutureFlightPossibility(userId, timeOfFlight);
 
-       if (flightPossibilityResult == null) {
-           return null;
-       }
+        if (flightPossibilityResult == null) {
+            throw new UserParameterNotFoundException("Для планирования полетов необходимо установить параметры.");
+        }
 
-       boolean flightPossibilityDecision = flightPossibilityResult.getInappropriateWeatherConditionsInfo().isEmpty();
-       ScheduledFlight scheduledFlightForSave = ScheduledFlight.builder()
-               .userId(userId)
-               .timeOfFlight(timeOfFlight)
-               .lastFlightPossibilityDecision(flightPossibilityDecision)
-               .build();
+        boolean flightPossibilityDecision = flightPossibilityResult.getInappropriateWeatherConditionsInfo().isEmpty();
+        ScheduledFlight scheduledFlightForSave = ScheduledFlight.builder()
+                .userId(userId)
+                .timeOfFlight(timeOfFlight)
+                .lastFlightPossibilityDecision(flightPossibilityDecision)
+                .build();
 
-      ScheduledFlight savedScheduledFlight = userDao.saveScheduledFlight(scheduledFlightForSave);
-      return ScheduledFlightMapper.mapToScheduledFlightDto(savedScheduledFlight);
+        ScheduledFlight savedScheduledFlight = userDao.saveScheduledFlight(scheduledFlightForSave);
+        return ScheduledFlightMapper.mapToScheduledFlightDto(savedScheduledFlight);
     }
 }
 

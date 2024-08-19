@@ -3,8 +3,10 @@ package org.example.exception;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @Builder
 public class BadResponse {
-    private String message;
+    private List<String> messages;
 }
