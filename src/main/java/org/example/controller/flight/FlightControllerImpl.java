@@ -1,4 +1,4 @@
-package org.example.controller;
+package org.example.controller.flight;
 
 import lombok.RequiredArgsConstructor;
 import org.example.dto.FlightDto;
@@ -16,11 +16,11 @@ public class FlightControllerImpl implements FlightController {
 
     @Override
     public FlightPossibilityResult evaluateFlightPossibility(FlightPlannerUser flightPlannerUser) {
-        return weatherService.evaluateFlightPossibility(flightPlannerUser.getId());
+        return weatherService.evaluateCurrentFlightPossibility(flightPlannerUser.getId());
     }
 
     @Override
-    public FlightDto addFlight(FlightPlannerUser flightPlannerUser, LocalDateTime timeOfFlight, Boolean successful) {
+    public FlightDto saveFlight(FlightPlannerUser flightPlannerUser, LocalDateTime timeOfFlight, Boolean successful) {
         return weatherService.saveFlightAndWeather(flightPlannerUser.getId(), timeOfFlight, successful);
     }
 }

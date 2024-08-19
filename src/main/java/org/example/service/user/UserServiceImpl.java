@@ -37,4 +37,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         User savedUser = userDao.saveUser(user);
         return UserMapper.mapToUserResponse(savedUser);
     }
+
+    @Override
+    public UserResponse updateUser(User user) {
+        if(user.getPassword() != null) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+        User updatedUser = userDao.updateUser(user);
+        return UserMapper.mapToUserResponse(updatedUser);
+    }
 }

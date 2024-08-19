@@ -112,4 +112,39 @@
         </sql>
     </changeSet>
 
+    <changeSet id="#15-create-table-scheduled_flight" author="Valera">
+        <preConditions>
+            <and>
+                <not>
+                    <tableExists tableName="scheduled_flight"/>
+                </not>
+                <tableExists tableName="user"/>
+            </and>
+        </preConditions>
+        <sql>
+            CREATE TABLE scheduled_flight
+            (
+                id                               SERIAL PRIMARY KEY         NOT NULL,
+                user_id                          INT REFERENCES "user" (id) NOT NULL,
+                time_of_flight                   TIMESTAMP                  NOT NULL,
+                last_flight_possibility_decision BOOLEAN                    NOT NULL
+            )
+        </sql>
+    </changeSet>
+
+    <changeSet id="#15-add-email-to-user" author="Valera">
+        <preConditions>
+            <and>
+                <tableExists tableName="user"/>
+                <not>
+                    <columnExists tableName="user" columnName="email"/>
+                </not>
+            </and>
+        </preConditions>
+        <sql>
+            ALTER table "user"
+                add email VARCHAR(30)
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>

@@ -1,6 +1,7 @@
-package org.example.controller;
+package org.example.controller.flight;
 
 import org.example.config.security.SecurityConfig;
+import org.example.controller.WithMockFlightPlannerUser;
 import org.example.dto.FlightDto;
 import org.example.dto.FlightPossibilityResult;
 import org.example.service.weather.WeatherService;
@@ -42,7 +43,7 @@ public class FlightControllerSecurityTest {
     @Test
     @WithMockFlightPlannerUser
     public void authorizedUserEvaluateFlightPossibilityTest() throws Exception {
-        when(weatherService.evaluateFlightPossibility(1))
+        when(weatherService.evaluateCurrentFlightPossibility(1))
                 .thenReturn(new FlightPossibilityResult());
 
         mockMvc.perform(get("http://localhost:8080/flight/evaluateCurrentPossibility"))
@@ -52,19 +53,19 @@ public class FlightControllerSecurityTest {
 
     @Test
     @WithAnonymousUser
-    public void anonymousUserAddFlightTest() throws Exception {
-        mockMvc.perform(post("http://localhost:8080/flight/add"))
+    public void anonymousUserSaveFlightTest() throws Exception {
+        mockMvc.perform(post("http://localhost:8080/flight/save"))
                 .andDo(print())
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
     @WithMockFlightPlannerUser
-    public void authorizedUserAddFlightTest() throws Exception {
+    public void authorizedUserSaveFlightTest() throws Exception {
         when(weatherService.saveFlightAndWeather(1, LocalDateTime.of(2024, 1, 1, 1,1), true))
                 .thenReturn(FlightDto.builder().build());
 
-        mockMvc.perform(post("http://localhost:8080/flight/add")
+        mockMvc.perform(post("http://localhost:8080/flight/save")
                         .param("timeOfFlight", "2024-01-01T01:01")
                         .param("successful", "true"))
                 .andDo(print())

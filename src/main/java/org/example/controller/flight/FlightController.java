@@ -1,4 +1,4 @@
-package org.example.controller;
+package org.example.controller.flight;
 
 import org.example.dto.FlightDto;
 import org.example.dto.FlightPlannerUser;
@@ -15,6 +15,6 @@ public interface FlightController {
     @GetMapping("/evaluateCurrentPossibility")
     FlightPossibilityResult evaluateFlightPossibility(@AuthenticationPrincipal FlightPlannerUser flightPlannerUser);
 
-    @PostMapping("/add")
-    FlightDto addFlight(@AuthenticationPrincipal FlightPlannerUser flightPlannerUser, LocalDateTime timeOfFlight, Boolean successful);
+    @PostMapping("/save")
+    FlightDto saveFlight(@AuthenticationPrincipal FlightPlannerUser flightPlannerUser, LocalDateTime timeOfFlight, Boolean successful);
 }

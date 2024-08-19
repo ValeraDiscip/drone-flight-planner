@@ -48,7 +48,7 @@ public class WeatherApiClientImpl implements WeatherApiClient {
     }
 
     @Override
-    public Weather getWeatherForecast(String city, String language, Integer dayCount) {
+    public Weather getWeatherForecast(String city, String language, Integer dayCount, LocalDate dayFrom) {
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.ACCEPT, "application/json");
         headers.set("x-rapidapi-key", weatherAPIProperties.getKey());
@@ -56,13 +56,14 @@ public class WeatherApiClientImpl implements WeatherApiClient {
         HttpEntity<String> request = new HttpEntity<>(headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                weatherAPIProperties.getUrl() + "/forecast.json" + "?q={city}&language={language}&days={dayCount}",
+                weatherAPIProperties.getUrl() + "/forecast.json" + "?q={city}&language={language}&days={dayCount}&dt={dayFrom}",
                 HttpMethod.GET,
                 request,
                 String.class,
                 city,
                 language,
-                dayCount
+                dayCount,
+                dayFrom
         );
         try {
             return objectMapper.readValue(response.getBody(), Weather.class);

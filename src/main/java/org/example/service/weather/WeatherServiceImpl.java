@@ -2,13 +2,15 @@ package org.example.service.weather;
 
 import lombok.RequiredArgsConstructor;
 import org.example.dao.UserDao;
-import org.example.dto.FlightPossibilityResult;
 import org.example.dto.FlightDto;
+import org.example.dto.FlightPossibilityResult;
+import org.example.dto.weather.WeatherInfo;
+import org.example.dto.weather.current.Current;
+import org.example.dto.weather.current.CurrentWeather;
+import org.example.dto.weather.forecast.HourWeatherForecast;
+import org.example.dto.weather.forecast.Weather;
 import org.example.entity.Flight;
 import org.example.entity.Parameter;
-import org.example.dto.weather.forecast.HourWeatherForecast;
-import org.example.dto.weather.current.CurrentWeather;
-import org.example.dto.weather.forecast.Weather;
 import org.example.mapper.FlightMapper;
 import org.springframework.stereotype.Service;
 
@@ -24,94 +26,125 @@ public class WeatherServiceImpl implements WeatherService {
     private final WeatherApiClient weatherApiClient;
 
     @Override
-    public FlightPossibilityResult evaluateFlightPossibility(Integer userId) {
-
+    public FlightPossibilityResult evaluateCurrentFlightPossibility(int userId) {
         Parameter userParameters = userDao.getParameterByUserId(userId);
 
         if (userParameters == null) {
             return null;
         }
 
-        FlightPossibilityResult flightPossibilityResult = new FlightPossibilityResult();
-
         CurrentWeather currentWeather = weatherApiClient.getCurrentWeather(userParameters.getLocation());
+        Current current = currentWeather.getCurrent();
 
-        flightPossibilityResult.setCurrentWeather(currentWeather);
+        return evaluateFlightPossibility(current, userParameters);
+    }
 
+
+    public FlightPossibilityResult evaluateFutureFlightPossibility(int userId, LocalDateTime timeOfFlight) {
+
+        Parameter userParameter = userDao.getParameterByUserId(userId);
+
+        if (userParameter == null) {
+            return null;
+        }
+
+        Weather weatherForecast = weatherApiClient.getWeatherForecast(userParameter.getLocation(),
+                userParameter.getLanguage(), 1, timeOfFlight.toLocalDate());
+
+        HourWeatherForecast hourWeatherForecast = weatherForecast.getForecast().getDayWeatherForecast().get(0)
+                .getHourWeatherForecast().get(timeOfFlight.getHour());
+
+        return evaluateFlightPossibility(hourWeatherForecast, userParameter);
+    }
+
+
+    private FlightPossibilityResult evaluateFlightPossibility(WeatherInfo weatherInfo, Parameter userParameter) {
+        if (userParameter == null) {
+            return null;
+        }
+
+        FlightPossibilityResult flightPossibilityResult = new FlightPossibilityResult();
+        flightPossibilityResult.setWeatherInfo(weatherInfo);
         List<String> inappropriateWeatherConditionsInfo = new ArrayList<>();
 
-        if (currentWeather.getCurrent().getTemperature() < userParameters.getMinTemperature()) {
+        if (weatherInfo.getTemperature() < userParameter.getMinTemperature()) {
             inappropriateWeatherConditionsInfo.add("Минимально допустимая температура для полета = "
-                    + userParameters.getMinTemperature()
-                    + ". Текущая температура = " + currentWeather.getCurrent().getTemperature()
+                    + userParameter.getMinTemperature()
+                    + ". Температура по прогнозу = " + weatherInfo.getTemperature()
                     + " (ниже допустимой на "
-                    + (userParameters.getMinTemperature() - currentWeather.getCurrent().getTemperature()) + ")");
+                    + (userParameter.getMinTemperature() - weatherInfo.getTemperature()) + ")");
         }
 
-        if (currentWeather.getCurrent().getTemperature() > userParameters.getMaxTemperature()) {
+        if (weatherInfo.getTemperature() > userParameter.getMaxTemperature()) {
             inappropriateWeatherConditionsInfo.add("Максимально допустимая температура для полета = "
-                    + userParameters.getMaxTemperature()
-                    + ". Текущая температура = " + currentWeather.getCurrent().getTemperature()
+                    + userParameter.getMaxTemperature()
+                    + ". Температура по прогнозу = " + weatherInfo.getTemperature()
                     + " (выше допустимой на "
-                    + (currentWeather.getCurrent().getTemperature() - userParameters.getMaxTemperature()) + ")");
+                    + (weatherInfo.getTemperature() - userParameter.getMaxTemperature()) + ")");
         }
 
-        if (currentWeather.getCurrent().getWindSpeed() > userParameters.getMaxWindSpeed()) {
+        if (weatherInfo.getWindSpeed() > userParameter.getMaxWindSpeed()) {
             inappropriateWeatherConditionsInfo.add("Максимально допустимая скорость ветра для полета = "
-                    + userParameters.getMaxWindSpeed()
-                    + ". Текущая скорость ветра = " + currentWeather.getCurrent().getWindSpeed()
+                    + userParameter.getMaxWindSpeed()
+                    + ". Скорость ветра по прогнозу = " + weatherInfo.getWindSpeed()
                     + " (выше допустимой на "
-                    + (currentWeather.getCurrent().getWindSpeed() - userParameters.getMaxWindSpeed()) + ")");
+                    + (weatherInfo.getWindSpeed() - userParameter.getMaxWindSpeed()) + ")");
         }
 
-        if (currentWeather.getCurrent().getWindGust() > userParameters.getMaxWindGust()) {
+        if (weatherInfo.getWindGust() > userParameter.getMaxWindGust()) {
             inappropriateWeatherConditionsInfo.add("Максимально допустимые порывы ветра для полета = "
-                    + userParameters.getMaxWindGust()
-                    + ". Текущие порывы ветра = " + currentWeather.getCurrent().getWindGust()
+                    + userParameter.getMaxWindGust()
+                    + ". Порывы ветра по прогнозу = " + weatherInfo.getWindGust()
                     + " (выше допустимых на "
-                    + (currentWeather.getCurrent().getWindGust() - userParameters.getMaxWindGust()) + ")");
+                    + (weatherInfo.getWindGust() - userParameter.getMaxWindGust()) + ")");
         }
 
-        if (currentWeather.getCurrent().getHumidity() > userParameters.getMaxHumidity()) {
+        if (weatherInfo.getHumidity() > userParameter.getMaxHumidity()) {
             inappropriateWeatherConditionsInfo.add("Максимально допустимая влажность для полета = "
-                    + userParameters.getMaxHumidity()
-                    + ". Текущая влажность = " + currentWeather.getCurrent().getHumidity()
+                    + userParameter.getMaxHumidity()
+                    + ". Влажность по прогнозу = " + weatherInfo.getHumidity()
                     + " (выше допустимой на "
-                    + (currentWeather.getCurrent().getHumidity() - userParameters.getMaxHumidity()) + ")");
+                    + (weatherInfo.getHumidity() - userParameter.getMaxHumidity()) + ")");
         }
 
-        if (currentWeather.getCurrent().getPrecip() > userParameters.getMaxPrecip()) {
+        if (weatherInfo.getPrecip() > userParameter.getMaxPrecip()) {
             inappropriateWeatherConditionsInfo.add("Максимально допустимое кол-во осадков для полета = "
-                    + userParameters.getMaxHumidity()
-                    + ". Текущее кол-во осадков = " + currentWeather.getCurrent().getHumidity()
+                    + userParameter.getMaxHumidity()
+                    + ". Кол-во осадков по прогнозу = " + weatherInfo.getHumidity()
                     + " (выше допустимого на "
-                    + (currentWeather.getCurrent().getHumidity() - userParameters.getMaxHumidity()) + ")");
+                    + (weatherInfo.getHumidity() - userParameter.getMaxHumidity()) + ")");
         }
 
-        if (currentWeather.getCurrent().getPressure() > userParameters.getMaxPressure()) {
+        if (weatherInfo.getPressure() > userParameter.getMaxPressure()) {
             inappropriateWeatherConditionsInfo.add("Максимально допустимое давление для полета = "
-                    + userParameters.getMaxPressure()
-                    + ". Текущее давление = " + currentWeather.getCurrent().getPressure()
+                    + userParameter.getMaxPressure()
+                    + ". Давление по прогнозу = " + weatherInfo.getPressure()
                     + " (выше допустимого на "
-                    + (currentWeather.getCurrent().getPressure() - userParameters.getMaxPressure()) + ")");
+                    + (weatherInfo.getPressure() - userParameter.getMaxPressure()) + ")");
         }
 
         if (!inappropriateWeatherConditionsInfo.isEmpty()) {
 
-            flightPossibilityResult.setConclusion("В настоящий момент полет не рекомендуется. " +
-                    "Значения погодных условий не соответствуют выставленным параметрам.");
-
-            flightPossibilityResult.setInappropriateWeatherConditionsInfo(inappropriateWeatherConditionsInfo);
-
-            return flightPossibilityResult;
+            if (weatherInfo instanceof Current) {
+                flightPossibilityResult.setConclusion("В настоящий момент полет не рекомендуется. " +
+                        "Значения погодных условий не соответствуют выставленным параметрам.");
+            } else if (weatherInfo instanceof HourWeatherForecast) {
+                flightPossibilityResult.setConclusion(((HourWeatherForecast) weatherInfo).getTime() + "полет не рекомендуется. " +
+                        "Значения погодных условий не соответствуют выставленным параметрам.");
+            }
         }
 
-        flightPossibilityResult.setConclusion("В настоящий момент полет является безопасным!");
+        else {
+            if (weatherInfo instanceof Current) {
+                flightPossibilityResult.setConclusion("В настоящий момент полет является безопасным!");
+            }
+        }
+        flightPossibilityResult.setInappropriateWeatherConditionsInfo(inappropriateWeatherConditionsInfo);
 
         return flightPossibilityResult;
     }
 
-    public FlightDto saveFlightAndWeather(Integer userId, LocalDateTime timeOfFlight, Boolean successful) {
+    public FlightDto saveFlightAndWeather(int userId, LocalDateTime timeOfFlight, boolean successful) {
         Parameter parameters = userDao.getParameterByUserId(userId);
 
         LocalDate localDate = LocalDate.of(timeOfFlight.getYear(), timeOfFlight.getMonth(), timeOfFlight.getDayOfMonth());

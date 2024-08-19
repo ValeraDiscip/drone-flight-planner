@@ -6,7 +6,9 @@ import org.example.dto.FlightPossibilityResult;
 import java.time.LocalDateTime;
 
 public interface WeatherService {
-    FlightPossibilityResult evaluateFlightPossibility(Integer userId);
+    FlightPossibilityResult evaluateCurrentFlightPossibility(int userId);
 
-    FlightDto saveFlightAndWeather(Integer userId, LocalDateTime timeOfFlight, Boolean successful);
+    FlightDto saveFlightAndWeather(int userId, LocalDateTime timeOfFlight, boolean successful);
+
+    FlightPossibilityResult evaluateFutureFlightPossibility(int userId, LocalDateTime timeOfFlight);
 }

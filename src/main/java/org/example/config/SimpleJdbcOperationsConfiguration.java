@@ -30,7 +30,15 @@ public class SimpleJdbcOperationsConfiguration {
     public SimpleJdbcInsertOperations userSimpleJdbcOperations(DataSource dataSource) {
         return new SimpleJdbcInsert(dataSource)
                 .withTableName("\"user\"")
-                .usingColumns( "username", "password")
+                .usingColumns( "username", "password", "email")
+                .usingGeneratedKeyColumns("id");
+    }
+
+    @Bean
+    public SimpleJdbcInsertOperations scheduledFlightSimpleJdbcOperations(DataSource dataSource) {
+        return new SimpleJdbcInsert(dataSource)
+                .withTableName("scheduled_flight")
+                .usingColumns("user_id", "time_of_flight", "last_flight_possibility_decision")
                 .usingGeneratedKeyColumns("id");
     }
 }

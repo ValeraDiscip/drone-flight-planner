@@ -6,8 +6,8 @@ import lombok.Data;
 @Data
 @Builder
 public class Parameter {
-    private Integer id;
-    private Integer userId;
+    private int id;
+    private int userId;
     private String language;
     private String location;
     private Double minTemperature;
