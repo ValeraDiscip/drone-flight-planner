@@ -26,9 +26,9 @@ public class UserDaoImpl implements UserDao {
     private final SimpleJdbcInsertOperations userSimpleJdbcOperations;
     private final SimpleJdbcInsertOperations scheduledFlightSimpleJdbcOperations;
 
-    public Parameter getParameterByUserId(Integer userId) {
+    public Parameter getParameterByUserId(int userId) {
         try {
-            return jdbcTemplate.queryForObject("SELECT user_id, language, location, min_temperature, max_temperature," +
+            return jdbcTemplate.queryForObject("SELECT id,    user_id, language, location, min_temperature, max_temperature," +
                     " max_wind_speed, max_wind_gust, max_humidity, max_precip, max_pressure FROM parameter WHERE user_id = ?", new ParameterMapper(), userId);
         } catch (EmptyResultDataAccessException e) {
             return null;
@@ -79,11 +79,27 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
+    public User getUserById(int userId) {
+        User foundUser;
+        try {
+            foundUser = jdbcTemplate.queryForObject("SELECT id, username, password, email FROM \"user\" WHERE id = ?", new UserMapper(), userId);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+        if (foundUser == null) {
+            return null;
+        }
+        foundUser.setParameters(getParameterByUserId(foundUser.getId()));
+        return foundUser;
+    }
+
+    @Override
     public User saveUser(User user) {
 
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("username", user.getUsername());
         parameters.addValue("password", user.getPassword());
+        parameters.addValue("email", user.getEmail());
         Number userId;
         try {
             userId = userSimpleJdbcOperations.executeAndReturnKey(parameters);
@@ -92,6 +108,32 @@ public class UserDaoImpl implements UserDao {
         }
         user.setId(userId.intValue());
         return user;
+    }
+
+    @Override
+    public User updateUser(User user) {
+        User userForUpdate = getUserById(user.getId());
+
+        if (userForUpdate == null) {
+            return null;
+        }
+        if (user.getUsername() != null) {
+            userForUpdate.setUsername(user.getUsername());
+        }
+        if (user.getPassword() != null) {
+            userForUpdate.setPassword(user.getPassword());
+        }
+        if (user.getEmail() != null) {
+            userForUpdate.setEmail(user.getEmail());
+        }
+        try {
+            jdbcTemplate.update("UPDATE \"user\" SET username = ?, password = ?, email = ? WHERE id = ?",
+                    userForUpdate.getUsername(), userForUpdate.getPassword(), userForUpdate.getEmail(), userForUpdate.getId());
+        }
+        catch (Exception e) {
+            throw new UserAlreadyExistsException("Пользователь с таким именем уже существует");
+        }
+        return userForUpdate;
     }
 
     @Override
@@ -111,20 +153,6 @@ public class UserDaoImpl implements UserDao {
 
         scheduledFlight.setFlightId(scheduledFlightId.intValue());
         return scheduledFlight;
-    }
-
-    public String getEmailByUserId(Integer userId) {
-        try {
-            return jdbcTemplate.queryForObject("SELECT email FROM \"user\" WHERE id = ?", String.class, userId);
-        }
-        catch (EmptyResultDataAccessException e) {
-            return null;
-        }
-    }
-
-    @Override
-    public void saveEmail(int userId, String email) {
-        jdbcTemplate.update("UPDATE \"user\" SET email = ? WHERE id = ?", email, userId);
     }
 
     @Override

@@ -30,7 +30,7 @@ public class SimpleJdbcOperationsConfiguration {
     public SimpleJdbcInsertOperations userSimpleJdbcOperations(DataSource dataSource) {
         return new SimpleJdbcInsert(dataSource)
                 .withTableName("\"user\"")
-                .usingColumns( "username", "password")
+                .usingColumns( "username", "password", "email")
                 .usingGeneratedKeyColumns("id");
     }
 

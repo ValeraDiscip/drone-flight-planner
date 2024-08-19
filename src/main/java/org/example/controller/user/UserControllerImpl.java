@@ -2,8 +2,8 @@ package org.example.controller.user;
 
 import lombok.RequiredArgsConstructor;
 import org.example.dto.FlightPlannerUser;
-import org.example.dto.request.SaveEmailRequest;
 import org.example.dto.request.RegisterUserRequest;
+import org.example.dto.request.UpdateUserRequest;
 import org.example.dto.response.UserResponse;
 import org.example.entity.User;
 import org.example.mapper.UserMapper;
@@ -22,8 +22,8 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public String saveEmail(FlightPlannerUser flightPlannerUser, SaveEmailRequest saveEmailRequest) {
-        userService.saveEmail(flightPlannerUser.getId(), saveEmailRequest.getEmail());
-        return "Email saved";
+    public UserResponse updateUser(FlightPlannerUser flightPlannerUser, UpdateUserRequest updateUserRequest) {
+        User userForUpdate = UserMapper.mapToUser(flightPlannerUser.getId(), updateUserRequest);
+        return userService.updateUser(userForUpdate);
     }
 }

@@ -39,7 +39,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public void saveEmail(int userId, String email) {
-        userDao.saveEmail(userId, email);
+    public UserResponse updateUser(User user) {
+        if(user.getPassword() != null) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+        User updatedUser = userDao.updateUser(user);
+        return UserMapper.mapToUserResponse(updatedUser);
     }
 }

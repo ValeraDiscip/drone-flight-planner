@@ -1,8 +1,9 @@
 package org.example.controller.user;
 
+import jakarta.validation.Valid;
 import org.example.dto.FlightPlannerUser;
-import org.example.dto.request.SaveEmailRequest;
 import org.example.dto.request.RegisterUserRequest;
+import org.example.dto.request.UpdateUserRequest;
 import org.example.dto.response.UserResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,8 +17,8 @@ public interface UserController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/register")
-    UserResponse saveUser(@RequestBody RegisterUserRequest registerUserRequest);
+    UserResponse saveUser(@Valid @RequestBody RegisterUserRequest registerUserRequest);
 
-    @PostMapping("/saveEmail")
-    String saveEmail(@AuthenticationPrincipal FlightPlannerUser flightPlannerUser, @RequestBody SaveEmailRequest saveEmailRequest);
+    @PostMapping("/update")
+    UserResponse updateUser(@AuthenticationPrincipal FlightPlannerUser flightPlannerUser, @Valid @RequestBody UpdateUserRequest updateUserRequest);
 }

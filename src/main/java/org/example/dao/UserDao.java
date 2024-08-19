@@ -8,21 +8,21 @@ import org.example.entity.User;
 import java.util.List;
 
 public interface UserDao {
-    Parameter getParameterByUserId(Integer userId);
+    Parameter getParameterByUserId(int userId);
 
     Flight saveFlightAndWeather(Flight flight);
 
     User getUserByUsername(String username);
 
+    User getUserById(int userId);
+
     User saveUser(User user);
+
+    User updateUser(User user);
 
     List<ScheduledFlight> getScheduledFlights();
 
     ScheduledFlight saveScheduledFlight(ScheduledFlight scheduledFlight);
-
-    String getEmailByUserId(Integer userId);
-
-    void saveEmail(int userId, String email);
 
     void updateLastFlightPossibilityDecision(int userId, boolean lastFlightPossibilityDecision);
 }

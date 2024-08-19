@@ -7,7 +7,8 @@ import org.example.entity.Parameter;
 @Data
 @Builder
 public class UserResponse {
-    private Integer id;
+    private int id;
     private String username;
+    private String email;
     private Parameter parameters;
 }
