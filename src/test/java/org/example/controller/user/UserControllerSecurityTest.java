@@ -2,11 +2,12 @@ package org.example.controller.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.config.security.SecurityConfig;
+import org.example.controller.WithMockFlightPlannerUser;
 import org.example.dto.request.RegisterUserRequest;
+import org.example.dto.request.UpdateUserRequest;
 import org.example.dto.response.UserResponse;
 import org.example.entity.User;
 import org.example.service.user.UserService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -36,19 +37,16 @@ public class UserControllerSecurityTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @BeforeEach
-    void setUp() {
+    @Test
+    @WithAnonymousUser
+    public void anonymousUserRegisterTest() throws Exception {
         when(userService.saveUser(User.builder()
                 .username(createRegisterUserRequest().getUsername())
                 .password(createRegisterUserRequest().getPassword())
                 .build()))
                 .thenReturn(UserResponse.builder()
                         .build());
-    }
 
-    @Test
-    @WithAnonymousUser
-    public void anonymousUserRegisterTest() throws Exception {
         mockMvc.perform(post("http://localhost:8080/user/register").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createRegisterUserRequest())))
                 .andDo(print())
@@ -63,10 +61,28 @@ public class UserControllerSecurityTest {
                 .andExpect(status().isForbidden());
     }
 
+    @Test
+    @WithAnonymousUser
+    public void anonymousUserUpdateTest() throws Exception {
+        mockMvc.perform(post("http://localhost:8080/user/update"))
+                .andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockFlightPlannerUser
+    public void authorizedUserUpdateTest() throws Exception {
+
+        mockMvc.perform(post("http://localhost:8080/user/update").contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new UpdateUserRequest())))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
     private RegisterUserRequest createRegisterUserRequest() {
         RegisterUserRequest registerUserRequest = new RegisterUserRequest();
-        registerUserRequest.setUsername("user");
-        registerUserRequest.setPassword("111");
+        registerUserRequest.setUsername("user111");
+        registerUserRequest.setPassword("11111");
         return registerUserRequest;
     }
 }

@@ -11,6 +11,7 @@ public class ParameterMapper implements RowMapper<Parameter> {
     @Override
     public Parameter mapRow(ResultSet resultSet, int rowNum) throws SQLException {
         return Parameter.builder()
+                .id(resultSet.getInt("id"))
                 .userId(resultSet.getInt("user_id"))
                 .language(resultSet.getString("language"))
                 .location(resultSet.getString("location"))

@@ -2,7 +2,8 @@ CREATE TABLE "user"
 (
     id       SERIAL PRIMARY KEY NOT NULL,
     username VARCHAR(30)        NOT NULL UNIQUE,
-    password VARCHAR(200)       NOT NULL
+    password VARCHAR(200)       NOT NULL,
+    email    VARCHAR(20)
 
 );
 
@@ -42,6 +43,16 @@ CREATE TABLE weather
     wind_gust   DOUBLE PRECISION           NOT NULL
 );
 
-INSERT INTO "user" (id, username, password) VALUES (1, 'TestUser', 1);
-INSERT INTO parameter (id, user_id, language, location, min_temperature, max_temperature, max_wind_speed, max_wind_gust, max_humidity, max_precip, max_pressure)
+CREATE TABLE scheduled_flight
+(
+    id                               SERIAL PRIMARY KEY         NOT NULL,
+    user_id                          INT REFERENCES "user" (id) NOT NULL,
+    time_of_flight                   TIMESTAMP                  NOT NULL,
+    last_flight_possibility_decision BOOLEAN                    NOT NULL
+);
+
+INSERT INTO "user" (id, username, password)
+VALUES (1, 'TestUser', 1);
+INSERT INTO parameter (id, user_id, language, location, min_temperature, max_temperature, max_wind_speed, max_wind_gust,
+                       max_humidity, max_precip, max_pressure)
 VALUES (1, 1, 'RU', 'Krasnodar', 0, 30, 20, 25, 80, 1, 1000);
